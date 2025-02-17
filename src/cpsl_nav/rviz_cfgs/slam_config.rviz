@@ -7,7 +7,6 @@ Panels:
         - /Global Options1
         - /Status1
         - /TF1/Frames1
-        - /LaserScan1
       Splitter Ratio: 0.5
     Tree Height: 70
   - Class: rviz_common/Selection
@@ -126,6 +125,8 @@ Visualization Manager:
           Value: false
         left_wheel:
           Value: false
+        map:
+          Value: true
         mouse:
           Value: false
         oakd_camera_bracket:
@@ -180,109 +181,110 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        odom:
-          base_link:
-            base_footprint:
-              {}
-            bump_front_center:
-              {}
-            bump_front_left:
-              {}
-            bump_front_right:
-              {}
-            bump_left:
-              {}
-            bump_right:
-              {}
-            bumper:
-              {}
-            button_1:
-              {}
-            button_2:
-              {}
-            button_power:
-              {}
-            cliff_front_left:
-              {}
-            cliff_front_right:
-              {}
-            cliff_side_left:
-              {}
-            cliff_side_right:
-              {}
-            front_caster_link:
-              {}
-            front_left_bottom_weight_block:
-              {}
-            front_left_top_weight_block:
-              {}
-            front_right_bottom_weight_block:
-              {}
-            front_right_top_weight_block:
-              {}
-            imu_link:
-              {}
-            ir_intensity_front_center_left:
-              {}
-            ir_intensity_front_center_right:
-              {}
-            ir_intensity_front_left:
-              {}
-            ir_intensity_front_right:
-              {}
-            ir_intensity_left:
-              {}
-            ir_intensity_right:
-              {}
-            ir_intensity_side_left:
-              {}
-            ir_omni:
-              {}
-            mouse:
-              {}
-            shell_link:
-              front_left_tower_standoff:
+        map:
+          odom:
+            base_link:
+              base_footprint:
                 {}
-              front_right_tower_standoff:
+              bump_front_center:
                 {}
-              oakd_camera_bracket:
-                oakd_link:
-                  oakd_imu_frame:
-                    {}
-                  oakd_left_camera_frame:
-                    oakd_left_camera_optical_frame:
-                      {}
-                  oakd_rgb_camera_frame:
-                    oakd_rgb_camera_optical_frame:
-                      turtlebot4/oakd_rgb_camera_frame/rgbd_camera:
-                        {}
-                  oakd_right_camera_frame:
-                    oakd_right_camera_optical_frame:
-                      {}
-              rear_left_tower_standoff:
+              bump_front_left:
                 {}
-              rear_right_tower_standoff:
+              bump_front_right:
                 {}
-              rplidar_link:
-                turtlebot4/rplidar_link/rplidar:
+              bump_left:
+                {}
+              bump_right:
+                {}
+              bumper:
+                {}
+              button_1:
+                {}
+              button_2:
+                {}
+              button_power:
+                {}
+              cliff_front_left:
+                {}
+              cliff_front_right:
+                {}
+              cliff_side_left:
+                {}
+              cliff_side_right:
+                {}
+              front_caster_link:
+                {}
+              front_left_bottom_weight_block:
+                {}
+              front_left_top_weight_block:
+                {}
+              front_right_bottom_weight_block:
+                {}
+              front_right_top_weight_block:
+                {}
+              imu_link:
+                {}
+              ir_intensity_front_center_left:
+                {}
+              ir_intensity_front_center_right:
+                {}
+              ir_intensity_front_left:
+                {}
+              ir_intensity_front_right:
+                {}
+              ir_intensity_left:
+                {}
+              ir_intensity_right:
+                {}
+              ir_intensity_side_left:
+                {}
+              ir_omni:
+                {}
+              mouse:
+                {}
+              shell_link:
+                front_left_tower_standoff:
                   {}
-              tower_sensor_plate:
+                front_right_tower_standoff:
+                  {}
+                oakd_camera_bracket:
+                  oakd_link:
+                    oakd_imu_frame:
+                      {}
+                    oakd_left_camera_frame:
+                      oakd_left_camera_optical_frame:
+                        {}
+                    oakd_rgb_camera_frame:
+                      oakd_rgb_camera_optical_frame:
+                        turtlebot4/oakd_rgb_camera_frame/rgbd_camera:
+                          {}
+                    oakd_right_camera_frame:
+                      oakd_right_camera_optical_frame:
+                        {}
+                rear_left_tower_standoff:
+                  {}
+                rear_right_tower_standoff:
+                  {}
+                rplidar_link:
+                  turtlebot4/rplidar_link/rplidar:
+                    {}
+                tower_sensor_plate:
+                  {}
+              wheel_drop_left:
+                left_wheel:
+                  {}
+              wheel_drop_right:
+                right_wheel:
+                  {}
+            std_dock_link:
+              green_buoy_link:
                 {}
-            wheel_drop_left:
-              left_wheel:
+              halo_link:
                 {}
-            wheel_drop_right:
-              right_wheel:
+              red_buoy_link:
                 {}
-          std_dock_link:
-            green_buoy_link:
-              {}
-            halo_link:
-              {}
-            red_buoy_link:
-              {}
-            yellow_buoy_link:
-              {}
+              yellow_buoy_link:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -319,10 +321,33 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 0.699999988079071
+      Binary representation: false
+      Binary threshold: 100
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
