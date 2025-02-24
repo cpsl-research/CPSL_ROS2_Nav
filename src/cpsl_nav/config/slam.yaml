@@ -11,7 +11,7 @@ slam_toolbox:
 
     # Ceres Solver Parameters
     ceres_solver_options:
-      num_threads: 8  # Set this to a reasonable number based on available cores
+      num_threads: 2  # Set this to a reasonable number based on available cores
 
     # ROS Parameters
     odom_frame: odom
@@ -30,7 +30,7 @@ slam_toolbox:
     minimum_time_interval: 0.5
     transform_timeout: 0.2
     tf_buffer_duration: 30.
-    stack_size_to_use: 4000000
+    stack_size_to_use: 2000000
     enable_interactive_mode: false
 
     # General Parameters

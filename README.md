@@ -74,6 +74,7 @@ Once the pre-requisites are fullfilled, you should now be able to run the slam_t
     |use_sim_time|false|Use the time from a Gazebo simulation|
     |sync|true|use synchronous SLAM (slower than asyncrhonous SLAM)|
     |namespace|''|The robot's namespace|
+    |scan_topic|'/scan'|The LaserScan topic to use for slam|
     |autostart|true| Automatically startup the slamtoolbox. Ignored when use_lifecycle_manager is true.|
     |use_lifecycle_manager| false| Enable bond connection during node activation| 
     |slam_params_file| 'slam.yaml'|Path to the SLAM Toolbox configuration file|
@@ -84,7 +85,7 @@ Once the pre-requisites are fullfilled, you should now be able to run the slam_t
     - If rviz is displayed, go into the SlamToolboxPlugin Window, specify the file name (e.g.;"building_1") without the .yaml/.pgm. and slick the "Save Map" button. The file will be saved in the current directory
     - If you aren't using RViz, use the following command to save the map:
     ```
-    ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: 'file_name'}"
+    ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{'name': 'file_name'}"
     ```
 
 

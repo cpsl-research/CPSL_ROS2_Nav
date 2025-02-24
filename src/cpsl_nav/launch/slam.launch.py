@@ -24,6 +24,8 @@ ARGUMENTS = [
                           description='Use synchronous SLAM'),
     DeclareLaunchArgument('namespace', default_value='',
                           description='Robot namespace'),
+    DeclareLaunchArgument('scan_topic', default_value='/scan',
+                          description='The LaserScan topic to use for slam'),
     DeclareLaunchArgument('autostart', default_value='true',
                           choices=['true', 'false'],
                           description='Automatically startup the slamtoolbox. Ignored when use_lifecycle_manager is true.'),
@@ -42,6 +44,7 @@ ARGUMENTS = [
 
 def launch_setup(context, *args, **kwargs):
     namespace = LaunchConfiguration('namespace')
+    scan_topic = LaunchConfiguration('scan_topic')
     sync = LaunchConfiguration('sync')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
@@ -59,7 +62,9 @@ def launch_setup(context, *args, **kwargs):
     launch_slam_async = PathJoinSubstitution(
         [pkg_slam_toolbox, 'launch', 'online_async_launch.py'])
     
-    rviz_config_file = PathJoinSubstitution([pkg_cpsl_navigation, 'rviz_cfgs', 'slam.rviz'])
+    scan_topic_str = scan_topic.perform(context)
+    
+    rviz_config_file = PathJoinSubstitution([pkg_cpsl_navigation, 'rviz_cfgs', 'slam_config.rviz'])
 
     # Apply the following re-mappings only within this group
     slam = GroupAction([
@@ -67,7 +72,7 @@ def launch_setup(context, *args, **kwargs):
 
         SetRemap('/tf', namespace_str + '/tf'),
         SetRemap('/tf_static', namespace_str + '/tf_static'),
-        SetRemap('/scan', namespace_str + '/scan'),
+        SetRemap('/scan', namespace_str + scan_topic_str),
         SetRemap('/map', namespace_str + '/map'),
         SetRemap('/map_metadata', namespace_str + '/map_metadata'),
 
