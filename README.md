@@ -83,7 +83,7 @@ Once the pre-requisites are fullfilled, you should now be able to run the slam_t
 3. Drive the vehicle around to generate the map
 4. Once finished, use one of the following two methods to save the generated map
     - If rviz is displayed, go into the SlamToolboxPlugin Window, specify the file name (e.g.;"building_1") without the .yaml/.pgm. and slick the "Save Map" button. The file will be saved in the current directory
-    - If you aren't using RViz, use the following command to save the map:
+    - If you aren't using RViz, use the following command to save the map (doesn't currently work):
     ```
     ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{'name': 'file_name'}"
     ```
