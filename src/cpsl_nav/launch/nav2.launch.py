@@ -53,12 +53,12 @@ def launch_setup(context, *args, **kwargs):
 
         SetRemap(namespace_str + '/global_costmap/scan', namespace_str + scan_topic_str),
         SetRemap(namespace_str + '/local_costmap/scan', namespace_str + scan_topic_str),
-        SetRemap('/local_costmap/published_footprint', namespace_str + '/local_costmap/published_footprint'),
-        SetRemap('/trajectories', namespace_str + '/trajectories'),
-        SetRemap('/tf', namespace_str + '/tf'),
-        SetRemap('/tf_static', namespace_str + '/tf_static'),
-        SetRemap(namespace_str + '/scan', namespace_str + scan_topic_str),
-        SetRemap('/map', namespace_str + '/map'),
+        # SetRemap('/local_costmap/published_footprint', namespace_str + '/local_costmap/published_footprint'),
+        # SetRemap('/trajectories', namespace_str + '/trajectories'),
+        # SetRemap('/tf', namespace_str + '/tf'),
+        # SetRemap('/tf_static', namespace_str + '/tf_static'),
+        # SetRemap(namespace_str + '/scan', namespace_str + scan_topic_str),
+        # SetRemap('/map', namespace_str + '/map'),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(launch_nav2),

@@ -1,6 +1,6 @@
 bt_navigator:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     global_frame: map
     robot_base_frame: base_link
@@ -20,7 +20,7 @@ bt_navigator:
 
 controller_server:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     controller_frequency: 20.0
     min_x_velocity_threshold: 0.001
@@ -128,35 +128,28 @@ controller_server:
 local_costmap:
   local_costmap:
     ros__parameters:
-      use_sim_time: true
+      use_sim_time: false
       enable_stamped_cmd_vel: false
-      update_frequency: 5.0
+      update_frequency: 2.0
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_link
-      use_sim_time: true
       rolling_window: true
       width: 3
       height: 3
       resolution: 0.06
       robot_radius: 0.175
-      plugins: ["static_layer", "voxel_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.0
         inflation_radius: 0.45
-      voxel_layer:
-        plugin: "nav2_costmap_2d::VoxelLayer"
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
         enabled: true
-        publish_voxel_map: true
-        origin_z: 0.0
-        z_resolution: 0.05
-        z_voxels: 16
-        max_obstacle_height: 2.0
-        mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: scan
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: true
           marking: true
@@ -173,23 +166,22 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
-      use_sim_time: true
+      use_sim_time: false
       enable_stamped_cmd_vel: false
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      use_sim_time: true
       robot_radius: 0.175
       resolution: 0.06
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer"
+        plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
         enabled: true
         observation_sources: scan
         scan:
-          topic: scan
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: true
           marking: true
@@ -209,10 +201,9 @@ global_costmap:
 
 planner_server:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     #expected_planner_frequency: 20.0
-    use_sim_time: true
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
@@ -222,7 +213,7 @@ planner_server:
 
 smoother_server:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     smoother_plugins: ["simple_smoother"]
     simple_smoother:
@@ -233,7 +224,7 @@ smoother_server:
 
 behavior_server:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     local_costmap_topic: local_costmap/costmap_raw
     global_costmap_topic: global_costmap/costmap_raw
@@ -262,11 +253,11 @@ behavior_server:
 
 robot_state_publisher:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
 
 waypoint_follower:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     loop_rate: 20
     stop_on_failure: false
@@ -279,7 +270,7 @@ waypoint_follower:
 
 velocity_smoother:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     smoothing_frequency: 20.0
     scale_velocities: False
@@ -295,7 +286,7 @@ velocity_smoother:
 
 collision_monitor:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     base_frame_id: "base_link"
     odom_frame_id: "odom"
@@ -328,7 +319,7 @@ collision_monitor:
 
 docking_server:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     enable_stamped_cmd_vel: false
     controller_frequency: 50.0
     initial_perception_timeout: 5.0
