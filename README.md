@@ -99,6 +99,10 @@ Once the pre-requisites are fullfilled, you should now be able to run the slam_t
 
 Complete the following steps to localize a vehicle using the nav2 ROS2 package
 
+```
+ros2 launch cpsl_nav localization.launch.py scan_topic:=/scan map:=cpsl.yaml
+```
+
 #### Pre-Requesites:
 In order for the slam_toolbox to function correctly, the following topics must be published. Note that the topic name and namespace of the published topics can be dynamically changed when running the launch commands.
 
