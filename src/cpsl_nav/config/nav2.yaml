@@ -22,7 +22,7 @@ controller_server:
   ros__parameters:
     use_sim_time: false
     enable_stamped_cmd_vel: false
-    controller_frequency: 20.0
+    controller_frequency: 10.0 #was 20.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
@@ -43,7 +43,7 @@ controller_server:
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
       time_steps: 56
-      model_dt: 0.05
+      model_dt: 0.1 # was 0.05
       batch_size: 2000
       ax_max: 3.0
       ax_min: -3.0
@@ -53,7 +53,7 @@ controller_server:
       vy_std: 0.2
       wz_std: 0.4
       vx_max: 0.5
-      vx_min: -0.35
+      vx_min: -0.35 #was -0.35, but disabling backup option
       vy_max: 0.5
       wz_max: 1.9
       iteration_count: 1
@@ -130,7 +130,7 @@ local_costmap:
     ros__parameters:
       use_sim_time: false
       enable_stamped_cmd_vel: false
-      update_frequency: 2.0
+      update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_link
@@ -139,25 +139,26 @@ local_costmap:
       height: 3
       resolution: 0.06
       robot_radius: 0.175
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      # plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.0
-        inflation_radius: 0.45
-      obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
-        enabled: true
-        observation_sources: scan
-        scan:
-          topic: /scan
-          max_obstacle_height: 2.0
-          clearing: true
-          marking: true
-          data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
+        inflation_radius: 0.35 #originally 0.45
+      # obstacle_layer:
+      #   plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
+      #   enabled: true
+      #   observation_sources: scan
+      #   scan:
+      #     topic: /scan
+      #     max_obstacle_height: 2.0
+      #     clearing: true
+      #     marking: true
+      #     data_type: "LaserScan"
+      #     raytrace_max_range: 3.0
+      #     raytrace_min_range: 0.0
+      #     obstacle_max_range: 2.5
+      #     obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: true
@@ -175,28 +176,29 @@ global_costmap:
       robot_radius: 0.175
       resolution: 0.06
       track_unknown_space: true
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
-      obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
-        enabled: true
-        observation_sources: scan
-        scan:
-          topic: /scan
-          max_obstacle_height: 2.0
-          clearing: true
-          marking: true
-          data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
+      # plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer","inflation_layer"]
+      # obstacle_layer:
+      #   plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
+      #   enabled: true
+      #   observation_sources: scan
+      #   scan:
+      #     topic: /scan
+      #     max_obstacle_height: 2.0
+      #     clearing: true
+      #     marking: true
+      #     data_type: "LaserScan"
+      #     raytrace_max_range: 3.0
+      #     raytrace_min_range: 0.0
+      #     obstacle_max_range: 2.5
+      #     obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: true
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.0
-        inflation_radius: 0.45
+        inflation_radius: 0.35
       always_send_full_costmap: true
 
 planner_server:
@@ -232,6 +234,7 @@ behavior_server:
     global_footprint_topic: global_costmap/published_footprint
     cycle_frequency: 10.0
     behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+    # behavior_plugins: ["spin","drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors::Spin"
     backup:
@@ -276,7 +279,7 @@ velocity_smoother:
     scale_velocities: False
     feedback: "OPEN_LOOP"
     max_velocity: [0.26, 0.0, 1.0]
-    min_velocity: [-0.26, 0.0, -1.0]
+    min_velocity: [-0.26, 0.0, -1.0] #, but removed to prevent backup
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
     odom_topic: "odom"

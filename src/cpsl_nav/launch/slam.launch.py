@@ -33,8 +33,8 @@ ARGUMENTS = [
                           choices=['true', 'false'],
                           description='Enable bond connection during node activation'),
     DeclareLaunchArgument('slam_params_file',
-                          default_value=PathJoinSubstitution([pkg_cpsl_navigation, 'config', 'slam.yaml']),
-                          description='Path to the SLAM Toolbox configuration file'),
+                          default_value='slam.yaml',
+                          description='SLAM YAML file in the config folder'),
     DeclareLaunchArgument('rviz',
                           default_value='false',
                           choices=['true','false'],
@@ -66,6 +66,9 @@ def launch_setup(context, *args, **kwargs):
     
     rviz_config_file = PathJoinSubstitution([pkg_cpsl_navigation, 'rviz_cfgs', 'slam_config.rviz'])
 
+    slam_params_str = slam_params.perform(context)
+    slam_config_file = PathJoinSubstitution([pkg_cpsl_navigation, 'config', slam_params_str])
+
     # Apply the following re-mappings only within this group
     slam = GroupAction([
         PushRosNamespace(namespace),
@@ -82,7 +85,7 @@ def launch_setup(context, *args, **kwargs):
                 ('use_sim_time', use_sim_time),
                 ('autostart', autostart),
                 ('use_lifecycle_manager', use_lifecycle_manager),
-                ('slam_params_file', slam_params)
+                ('slam_params_file', slam_config_file)
             ],
             condition=IfCondition(sync)
         ),
@@ -93,7 +96,7 @@ def launch_setup(context, *args, **kwargs):
                 ('use_sim_time', use_sim_time),
                 ('autostart', autostart),
                 ('use_lifecycle_manager', use_lifecycle_manager),
-                ('slam_params_file', slam_params)
+                ('slam_params_file', slam_config_file)
             ],
             condition=UnlessCondition(sync)
         ),

@@ -1,0 +1,66 @@
+amcl:
+  ros__parameters:
+    use_sim_time: true
+
+    # Lower odometry noise since odometry is accurate
+    alpha1: 0.1  # Lower rotational noise due to rotation in place
+    alpha2: 0.1  # Lower translational noise per unit of rotation
+    alpha3: 0.05  # Lower translational noise per unit of movement
+    alpha4: 0.05  # Lower rotational noise per unit of movement
+    alpha5: 0.1  # Lower lateral (side-to-side) noise
+
+    base_frame_id: "base_link"
+    beam_skip_distance: 0.7  # Increased to ignore unreliable radar returns
+    beam_skip_error_threshold: 0.75  # Slightly more tolerant before skipping beams
+    beam_skip_threshold: 0.3  
+    do_beamskip: true  # Enable beam skipping to ignore unreliable radar returns
+
+    global_frame_id: "map"
+    lambda_short: 0.2  # Increased to better model unexpected short readings
+    laser_likelihood_max_dist: 5.0 # Allow matching with radar at farther distances
+    laser_max_range: 5.0  # Adjusted for radar range
+    laser_min_range: 0.5  # Ignore extremely close readings
+    laser_model_type: "likelihood_field"
+
+    max_beams: 45  # Reduce beams to compensate for radar sparsity
+    max_particles: 1500  # Reduce since odometry is accurate
+    min_particles: 300  # Reduce minimum particles to improve efficiency
+
+    odom_frame_id: "odom"
+    pf_err: 0.03  # Lower to keep particles more constrained
+    pf_z: 0.95  # decrease to make filter trust odometry a bit more
+
+    recovery_alpha_fast: 0.0 #disabled to rely more on odometry and loop closure
+    recovery_alpha_slow: 0.0 #disabled to rely more on odometry and loop closure
+
+    resample_interval: 1  # Keep frequent resampling for responsiveness
+
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    save_pose_rate: 0.5
+
+    sigma_hit: 0.3  # Increased to better account for radar noise
+    tf_broadcast: true
+    transform_tolerance: 1.0
+
+    update_min_a: 0.15  # Reduce to trigger updates more frequently
+    update_min_d: 0.2  
+
+    z_hit: 0.6  # Increase to make correct radar readings more influential
+    z_max: 0.03  # Reduce reliance on max-range returns
+    z_rand: 0.4  # Reduce random noise contribution
+    z_short: 0.1  # Increase slightly to account for radar clutter
+
+    scan_topic: scan
+
+map_server:
+  ros__parameters:
+    use_sim_time: true
+    yaml_filename: ""
+
+map_saver:
+  ros__parameters:
+    use_sim_time: true
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: true

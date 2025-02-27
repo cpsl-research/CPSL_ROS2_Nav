@@ -85,7 +85,7 @@ Once the pre-requisites are fullfilled, you should now be able to run the slam_t
     |`scan_topic`|'/scan'|The LaserScan topic to use for slam|
     |`autostart`|true| Automatically startup the slamtoolbox. Ignored when use_lifecycle_manager is true.|
     |`use_lifecycle_manager`| false| Enable bond connection during node activation| 
-    |`slam_params_file`| 'slam.yaml'|Path to the SLAM Toolbox configuration file|
+    |`slam_params_file`| 'slam.yaml'|SLAM YAML file in the config folder|
     |`rviz`|false|Display an RViz window with navigation|
 
 3. Drive the vehicle around to generate the map

@@ -23,9 +23,9 @@ ARGUMENTS = [
                           description='Robot namespace'),
     DeclareLaunchArgument('scan_topic', default_value='/scan',
                           description='The LaserScan topic to use for slam'),
-    DeclareLaunchArgument('params_file',
-                          default_value=PathJoinSubstitution([pkg_cpsl_navigation, 'config', 'localization.yaml']),
-                          description='Path to the localization configuration file'),
+    DeclareLaunchArgument('param_file',
+                          default_value='localization.yaml',
+                          description='localization YAML file in the config folder'),
     DeclareLaunchArgument('map', 
                             default_value='cpsl.yaml',
                             description='yaml file in the cpsl_nav/maps folder with map information'),
@@ -35,7 +35,7 @@ def launch_setup(context, *args, **kwargs):
     use_sim_time = LaunchConfiguration('use_sim_time')
     namespace = LaunchConfiguration('namespace')
     scan_topic = LaunchConfiguration('scan_topic')
-    params_file = LaunchConfiguration('params_file')
+    params_file = LaunchConfiguration('param_file')
     map = LaunchConfiguration('map')
 
     namespace_str = namespace.perform(context)
@@ -47,6 +47,9 @@ def launch_setup(context, *args, **kwargs):
     )
    
     scan_topic_str = scan_topic.perform(context)
+
+    params_file_str = params_file.perform(context)
+    param_file = PathJoinSubstitution([pkg_cpsl_navigation, 'config', params_file_str])
     
     # Apply the following re-mappings only within this group
     localization = GroupAction([
@@ -67,7 +70,7 @@ def launch_setup(context, *args, **kwargs):
             launch_arguments=[('namespace',namespace),
                               ('map', map_path),
                               ('use_sim_time', use_sim_time),
-                              ('params_file', params_file)],
+                              ('params_file', param_file)],
         )
     ])
 
