@@ -73,11 +73,11 @@ def launch_setup(context, *args, **kwargs):
     slam = GroupAction([
         PushRosNamespace(namespace),
 
-        SetRemap('/tf', namespace_str + '/tf'),
-        SetRemap('/tf_static', namespace_str + '/tf_static'),
-        SetRemap('/scan', namespace_str + scan_topic_str),
-        SetRemap('/map', namespace_str + '/map'),
-        SetRemap('/map_metadata', namespace_str + '/map_metadata'),
+        # SetRemap('/tf', namespace_str + '/tf'),
+        # SetRemap('/tf_static', namespace_str + '/tf_static'),
+        # SetRemap('/scan', namespace_str + scan_topic_str),
+        # SetRemap('/map', namespace_str + '/map'),
+        # SetRemap('/map_metadata', namespace_str + '/map_metadata'),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(launch_slam_sync),
