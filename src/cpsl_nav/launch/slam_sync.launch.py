@@ -30,6 +30,8 @@ ARGUMENTS = [
                           description='Robot namespace'),
     DeclareLaunchArgument('scan_topic', default_value='scan',
                           description='The LaserScan topic to use for slam'),
+    DeclareLaunchArgument('base_frame_id', default_value='base_link',
+                          description='The frame ID of the base_link frame (without tf pre-fix)'),
     DeclareLaunchArgument('autostart', default_value='true',
                           choices=['true', 'false'],
                           description='Automatically startup the slamtoolbox. Ignored when use_lifecycle_manager is true.'),
@@ -48,6 +50,7 @@ ARGUMENTS = [
 def launch_setup(context, *args, **kwargs):
     namespace = LaunchConfiguration('namespace')
     scan_topic = LaunchConfiguration('scan_topic')
+    base_frame_id = LaunchConfiguration('base_frame_id')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
     use_lifecycle_manager = LaunchConfiguration('use_lifecycle_manager')
@@ -55,15 +58,18 @@ def launch_setup(context, *args, **kwargs):
     rviz = LaunchConfiguration('rviz')
 
     namespace_str = namespace.perform(context)
+    base_frame_id_str = base_frame_id.perform(context)
     if (namespace_str):
         if not namespace_str.startswith('/'):
             namespace_str = '/' + namespace_str
         tf_prefix = namespace_str.strip("/")
         odom_frame = "{}/odom".format(tf_prefix)
+        base_frame = "{}/{}".format(tf_prefix,base_frame_id_str)
     else:
         tf_prefix = ""
         odom_frame = "odom"
-    
+        base_frame = base_frame_id_str
+
     scan_topic_str = scan_topic.perform(context)
     scan_topic_str = scan_topic_str.strip("/")
     
@@ -76,7 +82,8 @@ def launch_setup(context, *args, **kwargs):
     param_substitutions = {
         'autostart': autostart,
         'scan_topic':scan_topic_str,
-        'odom_frame':odom_frame
+        'odom_frame':odom_frame,
+        'base_frame':base_frame
     }
 
     configured_params = ParameterFile(
