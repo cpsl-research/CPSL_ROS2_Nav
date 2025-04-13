@@ -33,7 +33,8 @@ slam_toolbox:
     stack_size_to_use: 2000000
     enable_interactive_mode: true
 
-    # map_start_pose: [0.0,0.0,0.0]
+    map_file_name: /home/cpsl/Documents/CPSL_ROS2_Nav/test_3
+    map_start_pose: [0.0,0.0,0.0]
     # map_start_at_dock: false
 
     # General Parameters

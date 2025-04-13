@@ -59,11 +59,9 @@ def launch_setup(context, *args, **kwargs):
         if not namespace_str.startswith('/'):
             namespace_str = '/' + namespace_str
         tf_prefix = namespace_str.strip("/")
-        base_frame = "{}/base_link".format(tf_prefix)
         odom_frame = "{}/odom".format(tf_prefix)
     else:
         tf_prefix = ""
-        base_frame = "base_link"
         odom_frame = "odom"
     
     scan_topic_str = scan_topic.perform(context)
@@ -78,7 +76,6 @@ def launch_setup(context, *args, **kwargs):
     param_substitutions = {
         'autostart': autostart,
         'scan_topic':scan_topic_str,
-        'base_frame':base_frame,
         'odom_frame':odom_frame
     }
 
