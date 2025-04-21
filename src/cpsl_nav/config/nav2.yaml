@@ -3,8 +3,8 @@ bt_navigator:
     use_sim_time: false
     enable_stamped_cmd_vel: false
     global_frame: map
-    robot_base_frame: base_link
-    odom_topic: odom
+    robot_base_frame: cpsl_ugv_1/base_link
+    odom_topic: odom_repub
     bt_loop_duration: 10
     default_server_timeout: 20
     wait_for_service_timeout: 1000
@@ -22,7 +22,7 @@ controller_server:
   ros__parameters:
     use_sim_time: false
     enable_stamped_cmd_vel: false
-    controller_frequency: 10.0 #was 20.0
+    controller_frequency: 5.0 #was 20.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
@@ -34,7 +34,7 @@ controller_server:
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      movement_time_allowance: 20.0 #was 10.0
     general_goal_checker:
       stateful: true
       plugin: "nav2_controller::SimpleGoalChecker"
@@ -42,9 +42,9 @@ controller_server:
       yaw_goal_tolerance: 0.25
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
-      time_steps: 56
-      model_dt: 0.1 # was 0.05
-      batch_size: 2000
+      time_steps: 40 #was 56
+      model_dt: 0.2 # was 0.05
+      batch_size: 1000 #was 2000
       ax_max: 3.0
       ax_min: -3.0
       ay_max: 3.0
@@ -58,7 +58,7 @@ controller_server:
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
-      transform_tolerance: 0.1
+      transform_tolerance: 0.3 #was 0.1
       temperature: 0.3
       gamma: 0.015
       motion_model: "DiffDrive"
@@ -132,8 +132,8 @@ local_costmap:
       enable_stamped_cmd_vel: false
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: odom
-      robot_base_frame: base_link
+      global_frame: cpsl_ugv_1/odom
+      robot_base_frame: cpsl_ugv_1/base_link
       rolling_window: true
       width: 3
       height: 3
@@ -144,7 +144,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.0
-        inflation_radius: 0.35 #originally 0.45
+        inflation_radius: 0.25 #originally 0.45
       # obstacle_layer:
       #   plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
       #   enabled: true
@@ -172,7 +172,7 @@ global_costmap:
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
-      robot_base_frame: base_link
+      robot_base_frame: cpsl_ugv_1/base_link
       robot_radius: 0.175
       resolution: 0.06
       track_unknown_space: true
@@ -198,7 +198,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.0
-        inflation_radius: 0.35
+        inflation_radius: 0.15
       always_send_full_costmap: true
 
 planner_server:
@@ -246,8 +246,8 @@ behavior_server:
     assisted_teleop:
       plugin: "nav2_behaviors::AssistedTeleop"
     global_frame: map
-    local_frame: odom
-    robot_base_frame: base_link
+    local_frame: cpsl_ugv_1/odom
+    robot_base_frame: cpsl_ugv_1/base_link
     transform_tolerance: 0.1
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
@@ -291,8 +291,8 @@ collision_monitor:
   ros__parameters:
     use_sim_time: false
     enable_stamped_cmd_vel: false
-    base_frame_id: "base_link"
-    odom_frame_id: "odom"
+    base_frame_id: "cpsl_ugv_1/base_link"
+    odom_frame_id: "cpsl_ugv_1/odom"
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel"
     state_topic: "collision_monitor_state"
@@ -306,7 +306,7 @@ collision_monitor:
     FootprintApproach:
       type: "polygon"
       action_type: "approach"
-      footprint_topic: "/local_costmap/published_footprint"
+      footprint_topic: "local_costmap/published_footprint"
       time_before_collision: 1.2
       simulation_time_step: 0.1
       min_points: 6
@@ -315,7 +315,7 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: "scan"
+      topic: "livox/scan"
       min_height: 0.15
       max_height: 2.0
       enabled: True
@@ -331,8 +331,8 @@ docking_server:
     undock_linear_tolerance: 0.05
     undock_angular_tolerance: 0.1
     max_retries: 3
-    base_frame: "base_link"
-    fixed_frame: "odom"
+    base_frame: "cpsl_ugv_1/base_link"
+    fixed_frame: "cpsl_ugv_1/odom"
     dock_backwards: false
     dock_prestaging_tolerance: 0.5
 
