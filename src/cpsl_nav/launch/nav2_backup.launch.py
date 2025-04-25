@@ -49,7 +49,7 @@ ARGUMENTS = [
     ),
     DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(pkg_cpsl_navigation, 'config', 'nav2.yaml'),
+        default_value=os.path.join(pkg_cpsl_navigation, 'config', 'nav2_ugv.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     ),
     DeclareLaunchArgument(
