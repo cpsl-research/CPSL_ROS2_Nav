@@ -64,6 +64,9 @@ In order for the slam_toolbox to function correctly, the following topics must b
 #### Note: Gazebo simulation
 If you are using a gazebo simulation, I recommend starting the slam_toolbox before starting the gazebo simulation. Performance was much more consistent when starting the toolbox first followed by the gazebo simulation compared to the other way around. 
 
+#### Note: tf frame naming scheme
+For multi-robot operations, it is common to give each agent its own namespace (e.g. `/agent_1/scan`). If you are using this approach, I've also designed the following stacks to assume that the tf frames also have the same tf prefix applied (e.g. the lidar frame would be `lidar_frame/scan`). 
+
 #### Steps to follow:
 Once the pre-requisites are fullfilled, you should now be able to run the slam_toolbox as follows:
 1. Source the CPSL_ROS2_Nav package
@@ -74,28 +77,85 @@ Once the pre-requisites are fullfilled, you should now be able to run the slam_t
 
 2. Run the slam_toolbox launch file
     ```
-    ros2 launch cpsl_nav slam.launch.py
+    ros2 launch cpsl_nav slam_sync.launch.py
     ```
     When launching, the following parameters can also be set by using the `parameter:=value` notation after the name of the launch file:
     | **Parameter** | **Default** | **Description** |
     |----------------|--------------|------------------------------------------------------|
     |`use_sim_time`|false|Use the time from a Gazebo simulation|
-    |`sync`|true|use synchronous SLAM (slower than asyncrhonous SLAM)|
-    |`namespace`|''|The robot's namespace|
-    |`scan_topic`|'/scan'|The LaserScan topic to use for slam|
+    |`namespace`|''|The robot's namespace (will also be applied as a prefix to base_frame_id)|
+    |`scan_topic`|'/scan'|The LaserScan topic to use for slam (`/radar_combined/scan` for radar, `/livox/scan/` for lidar)|
+    |`base_frame_id`|'base_link'|The frame ID of the base_link frame (without tf pre-fix)|
     |`autostart`|true| Automatically startup the slamtoolbox. Ignored when use_lifecycle_manager is true.|
     |`use_lifecycle_manager`| false| Enable bond connection during node activation| 
-    |`slam_params_file`| 'slam.yaml'|SLAM YAML file in the config folder|
+    |`slam_params_file`| 'slam.yaml'|Path to the SLAM Toolbox configuration file|
     |`rviz`|false|Display an RViz window with navigation|
 
 3. Drive the vehicle around to generate the map
-4. Once finished, use one of the following two methods to save the generated map
-    - If rviz is displayed, go into the SlamToolboxPlugin Window, specify the file name (e.g.;"building_1") without the .yaml/.pgm. and slick the "Save Map" button. The file will be saved in the current directory
-    - If you aren't using RViz, use the following command to save the map (doesn't currently work):
+4. To save the serialized map to a file (for continuation of mapping), use the following code (replace NAMESPACE with the namespace of the robot and MAP_NAME with the desired file name you wish to use to save the map): 
     ```
-    ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{'name': 'file_name'}"
+    ros2 service call /NAMESPACE/slam_toolbox/serialize_map slam_toolbox/SerializePoseGraph "{filename: 'MAP_NAME'}"
     ```
-### 2. Run localization in a mapped environment [single agent]:
+5. To save a .pgm and .yaml file of the map, use the following commands instead (replace NAMESPACE with the namespace of the robot and MAP_NAME with the desired file name you wish to use to save the map):
+    ```
+    ros2 service call /NAMESPACE/slam_toolbox/save_map slam_toolbox/SaveMap "{name: 'file_name'}"
+    ```
+
+### 2. Generate a map using a previously generated map [multi agent]:
+If you have a previous map of a space and would like to extend or continue to update the pose graph, use the following steps 
+
+#### Pre-Requesites:
+1. In order for the slam_toolbox to function correctly, the following topics must be published. Note that the topic name and namespace of the published topics can be dynamically changed when running the launch commands
+
+| **Topic** | **Type** | **Description** |  
+|-----------|--------------------------|---------------------------------------------|  
+| `/scan`   | `sensor_msgs/LaserScan`  | The input scan from your laser to utilize |  
+| `/tf`    | N/A                      | A valid transform from your configured `odom_frame` to `base_frame` |  
+
+2. The previous map must also be saved as a .posegraph and .data file (see the above tutorial for guidance on how to do this). 
+
+#### Note: Gazebo simulation
+If you are using a gazebo simulation, I recommend starting the slam_toolbox before starting the gazebo simulation. Performance was much more consistent when starting the toolbox first followed by the gazebo simulation compared to the other way around. 
+
+#### Note: tf frame naming scheme
+For multi-robot operations, it is common to give each agent its own namespace (e.g. `/agent_1/scan`). If you are using this approach, I've also designed the following stacks to assume that the tf frames also have the same tf prefix applied (e.g. the lidar frame would be `lidar_frame/scan`). 
+
+#### Steps to follow:
+Once the pre-requisites are fullfilled, you should now be able to run the slam_toolbox as follows:
+1. In the `cpsl_nav/config` directory, open the slam_from_previous.yaml configuration file. In there, modify the `map_file_name` parameter to be the absolute path to the .posegraph and .data files without the extension (e.g.; "/home/cpsl/Documents/uav_map"). Additionally, update the `map_start_pose` to the approximate location of the new agent in the original map's frame. 
+
+2. Source the CPSL_ROS2_Nav package
+    ```
+    cd CPSL_ROS2_Nav
+    source install/setup.bash
+    ```
+
+3. Run the slam_toolbox launch file (update other parameters as needed)
+    ```
+    ros2 launch cpsl_nav slam_sync.launch.py slam_params_file:=slam_from_previous.yaml
+    ```
+    When launching, the following parameters can also be set by using the `parameter:=value` notation after the name of the launch file:
+    | **Parameter** | **Default** | **Description** |
+    |----------------|--------------|------------------------------------------------------|
+    |`use_sim_time`|false|Use the time from a Gazebo simulation|
+    |`namespace`|''|The robot's namespace (will also be applied as a prefix to base_frame_id)|
+    |`scan_topic`|'/scan'|The LaserScan topic to use for slam (`/radar_combined/scan` for radar, `/livox/scan/` for lidar)|
+    |`base_frame_id`|'base_link'|The frame ID of the base_link frame (without tf pre-fix)|
+    |`autostart`|true| Automatically startup the slamtoolbox. Ignored when use_lifecycle_manager is true.|
+    |`use_lifecycle_manager`| false| Enable bond connection during node activation| 
+    |`slam_params_file`| 'slam.yaml'|Path to the SLAM Toolbox configuration file|
+    |`rviz`|false|Display an RViz window with navigation|
+
+3. Drive the vehicle around to generate the map
+4. To save an updated serialized map to a file (for continuation of mapping), use the following code (replace NAMESPACE with the namespace of the robot and MAP_NAME with the desired file name you wish to use to save the map): 
+    ```
+    ros2 service call /NAMESPACE/slam_toolbox/serialize_map slam_toolbox/SerializePoseGraph "{filename: 'MAP_NAME'}"
+    ```
+5. To save an updated .pgm and .yaml file of the map, use the following commands instead (replace NAMESPACE with the namespace of the robot and MAP_NAME with the desired file name you wish to use to save the map):
+    ```
+    ros2 service call /NAMESPACE/slam_toolbox/save_map slam_toolbox/SaveMap "{name: 'file_name'}"
+    ```
+### 3. Run localization in a mapped environment [single agent]:
 
 Complete the following steps to localize a vehicle using the nav2 ROS2 package
 
@@ -152,6 +212,67 @@ Once the pre-requisites are fullfilled, you should now be able to run the ROS2 n
 
 4. Finally, return to the RVIZ window. At the top, click on the "2D Pose Estimate", and use it to select the location and direction in the map where the robot is currently placed. Localization should now be up and running. Before running the navigation stack, I recommend driving the vehicle around a bit so that the particle filter can better estimate the vehicle's location.
 
+### 3. Run the navigation stack
+
+If you have a map, a method of localizing your agent in the map, and want to autonomously navigate the vehicle in the environment, complete the following steps.
+
+#### Pre-Requesites:
+1. In order for the nav2 stack to function correctly, the following topics must be published. Note that the topic name and namespace of the published topics can be dynamically changed when configuring the stack
+
+| **Topic** | **Type** | **Description** |  
+|-----------|--------------------------|---------------------------------------------|  
+| `/scan`  | `sensor_msgs/LaserScan`  | The input scan from your laser to utilize |  
+| `/tf`    | N/A                      | A valid transform from your configured `odom_frame` to `base_frame` (usually published by the agend) and `map` to `odom` (published by slam_toolbox or nav2 localization) | 
+
+2. Additionally, the nav2 stack will publish a `cmd_vel_nav` message indicating the desired velocity from the nav2 stack. Your platform must be able to accept these commands and move accordingly. Note the namespace can be applied dynamically as documented later on.
+| **Topic** | **Type** | **Description** |  
+|-----------|--------------------------|---------------------------------------------|  
+| `/cmd_vel_nav`  | `geometry_msgs/Twist` or `geometry_msgs/TwistStamped`  | output command from the nav2 stack for the agent to follow|
+
+3. Finally, complete the following steps to create a custom .yaml file configuration for your agent:
+    - Create a new .yaml file config for your agent, by first copying either the `nav2_ugv.yaml` (for differential drive agents) or `nav2_uav.yaml` (for omni-directional control).
+    - In the `bt_navigator`, update the `global_frame`, `robot_base_frame`, and `odom_topic` to match your platform. Note that when specifying a topic `/topic_name` implies absolute topic name while `topic_name` implies relative topic name (within the namespace). we recommend using the second option as it allows for custom namespaces. Finally, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `controller_server`, update the `motion_model` to your vehicle. We recommend visiting the ROS2 nav2 wiki page to learn how to customize this if needed. Note that the current configuraitons use the MPPIController plugin though. Finally, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `local_costmap`, update the `global_frame`, `robot_base_frame`, and `scan/topic` parameters to correspond to your platform. Note that when specifying a topic `/topic_name` implies absolute topic name while `topic_name` implies relative topic name (within the namespace). we recommend using the second option as it allows for custom namespaces. Finally, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `global_costmap`, update the `global_frame`, `robot_base_frame`, and `scan/topic` parameters to correspond to your platform. Note that when specifying a topic `/topic_name` implies absolute topic name while `topic_name` implies relative topic name (within the namespace). we recommend using the second option as it allows for custom namespaces. Finally, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `planner_server`, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `smoother_server`, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `behavior_server`, adjust the `local_frame` and `robot_base_frame` to be the corresponding frames in your tf tree. Finally, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `waypoint_follower`, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - In the `velocity_smoother`, update the `odom_topic`. Note that when specifying a topic `/topic_name` implies absolute topic name while `topic_name` implies relative topic name (within the namespace). we recommend using the second option as it allows for custom namespaces. Finally, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+    - Finally, in the `collision_monitor`, update the `base_frame_id`, `odom_frame_id`, and `scan/topic` parameters to match your agent's configuration. Note that when specifying a topic `/topic_name` implies absolute topic name while `topic_name` implies relative topic name (within the namespace). we recommend using the second option as it allows for custom namespaces. Finally, adjust the `enable_stamped_cmd_vel` to match the type of twist (Twist vs TwistStamped) message your platform expects
+4. Finally, for a new platform, it may be helpful to have ChatGPT refine the .yaml configuration file for additional tuning as needed.
+
+#### Steps to follow:
+Once the pre-requisites are fullfilled, you should now be able to run the navigation stack as follows (note localization or SLAM must already be running for navigation to work):
+
+1. Build the navigation stack
+```
+cd CPSL_ROS2_Nav
+colcon build --symlink-install
+source install/setup.bash
+```
+
+2. Then launch the navigation stack as follows:
+```
+ros2 launch cpsl_nav nav2.launch.py
+```
+
+When launching, the following parameters can also be set by using the `parameter:=value` notation after the name of the launch file:
+| **Parameter** | **Default** | **Description** |
+|----------------|--------------|------------------------------------------------------|
+|`use_sim_time`|false|Use the time from a Gazebo simulation|
+|`namespace`|''|The robot's namespace|
+|`params_file`| "nav2_ugv.yaml" | the .yaml config to use in the config folder
+|`autostart`|true| Automatically startup the slamtoolbox. Ignored when use_lifecycle_manager is true.|
+|`use_lifecycle_manager`| false| Enable bond connection during node activation| 
+|`slam_params_file`| 'slam.yaml'|Path to the SLAM Toolbox configuration file|
+
+3. Next, start rviz using the following command. A pre-setup configuration for viewing/controlling navigation can be found in the `cpsl_nav/rviz_cfgs` directory (try the nav_config_uav.rviz or nav_config.rviz) files. Note that you may have to change some of the subscribed topics for things to work correctly.
+```
+rviz2
+```
+4. Finally, you can navigate the vehicle accordingly by using the "Goal pose" button in RVIZ
 ### 2. View the TF Tree
 
 While settup up the navigation stack, it may be helpful to view the full tf tree. To do so, perform the following steps:
