@@ -4,11 +4,13 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /TF1
+        - /Global Options1
+        - /TF1/Status1
         - /TF1/Frames1
         - /RobotModel1/Description Topic1
         - /radar_11/Topic1
-        - /LidarScan1
+        - /RadarScan1/Status1
+        - /RadarScan1/Topic1
         - /InteractiveMarkers1/Status1
       Splitter Ratio: 0.5
     Tree Height: 457
@@ -183,7 +185,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /cpslCreate3/radar_0/detected_points
+        Value: /cpsl_uav_1/radar_0/radsar_point_cloud
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
@@ -250,7 +252,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /radar_combined/scan
+        Value: /cpsl_uav_1/radar_0/scan
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -357,8 +359,7 @@ Visualization Manager:
       Enabled: true
       Name: MarkerArray
       Namespaces:
-        slam_toolbox: true
-        slam_toolbox_edges: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -378,7 +379,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: map
+    Fixed Frame: cpsl_uav_1/odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -421,7 +422,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 17.72972869873047
+      Distance: 31.973939895629883
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -436,10 +437,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0047974586486816
+      Pitch: 1.4847971200942993
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.099041700363159
+      Yaw: 3.1140425205230713
     Saved: ~
 Window Geometry:
   Camera:

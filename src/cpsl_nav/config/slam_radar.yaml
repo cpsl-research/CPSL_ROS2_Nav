@@ -17,7 +17,7 @@ slam_toolbox:
     odom_frame: odom
     map_frame: map
     base_frame: base_link
-    scan_topic: /scan
+    scan_topic: radar_0/scan
     use_map_saver: true
     mode: mapping
 
@@ -28,8 +28,8 @@ slam_toolbox:
     resolution: 0.1  # Adjusted for lower-resolution radar data
     max_laser_range: 15.0  # Slightly increased to handle sparse radar data
     minimum_time_interval: 0.5
-    transform_timeout: 0.3  # Slightly increased to allow for processing delays
-    tf_buffer_duration: 30.
+    transform_timeout: 10.0  #was 0.3 Slightly increased to allow for processing delays
+    tf_buffer_duration: 300.
     stack_size_to_use: 2000000
     enable_interactive_mode: false
 
