@@ -99,11 +99,14 @@ def launch_setup(context, *args, **kwargs):
     #slam toolbox setting up
     start_sync_slam_toolbox_node = LifecycleNode(
         parameters=[
-          configured_params,
-          {
-            'use_lifecycle_manager': use_lifecycle_manager,
-            'use_sim_time': use_sim_time
-          }
+            configured_params,
+            {
+                'use_lifecycle_manager': use_lifecycle_manager,
+                'use_sim_time': use_sim_time
+            }
+        ],
+        remappings=[
+            ('/map', 'map')
         ],
         package='slam_toolbox',
         executable='sync_slam_toolbox_node',
@@ -111,6 +114,7 @@ def launch_setup(context, *args, **kwargs):
         output='screen',
         namespace=namespace_str
     )
+
 
     configure_event = EmitEvent(
         event=ChangeState(

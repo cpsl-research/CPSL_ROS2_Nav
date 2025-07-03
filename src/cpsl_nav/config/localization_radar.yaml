@@ -9,7 +9,7 @@ amcl:
     alpha4: 0.05  # Lower rotational noise per unit of movement
     alpha5: 0.1  # Lower lateral (side-to-side) noise
 
-    base_frame_id: "base_link"
+    base_frame_id: "cpsl_ugv_1/base_link"
     beam_skip_distance: 0.7  # Increased to ignore unreliable radar returns
     beam_skip_error_threshold: 0.75  # Slightly more tolerant before skipping beams
     beam_skip_threshold: 0.3  
@@ -26,7 +26,7 @@ amcl:
     max_particles: 1500  # Reduce since odometry is accurate
     min_particles: 300  # Reduce minimum particles to improve efficiency
 
-    odom_frame_id: "odom"
+    odom_frame_id: "cpsl_ugv_1/odom"
     pf_err: 0.03  # Lower to keep particles more constrained
     pf_z: 0.95  # decrease to make filter trust odometry a bit more
 
