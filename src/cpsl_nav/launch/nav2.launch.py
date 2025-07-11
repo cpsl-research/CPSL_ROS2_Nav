@@ -51,16 +51,6 @@ ARGUMENTS = [
         default_value='true',
         description='Automatically startup the nav2 stack',
     ),
-    # DeclareLaunchArgument(
-    #     'use_composition',
-    #     default_value='False',
-    #     description='Use composed bringup if True',
-    # ),
-    # DeclareLaunchArgument(
-    #     'container_name',
-    #     default_value='nav2_container',
-    #     description='the name of container that nodes will load in if use composition',
-    # ),
     DeclareLaunchArgument(
         'use_respawn',
         default_value='False',
@@ -151,7 +141,7 @@ def launch_setup(context, *args,**kwargs):
 
     # remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
     remappings = [
-        ('{}/map'.format(namespace_str),"/map"),
+        # ('{}/map'.format(namespace_str),"/map"),
         ('{}/goal_pose'.format(namespace_str),'/goal_pose')]
 
     load_nodes = GroupAction(
@@ -247,17 +237,6 @@ def launch_setup(context, *args,**kwargs):
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings,
             ),
-            # Node(
-            #     package='opennav_docking',
-            #     executable='opennav_docking',
-            #     name='docking_server',
-            #     output='screen',
-            #     respawn=use_respawn,
-            #     respawn_delay=2.0,
-            #     parameters=[configured_params],
-            #     arguments=['--ros-args', '--log-level', log_level],
-            #     remappings=remappings,
-            # ),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',

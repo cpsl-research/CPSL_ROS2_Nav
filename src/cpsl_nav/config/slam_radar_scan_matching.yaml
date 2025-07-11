@@ -39,10 +39,10 @@ slam_toolbox:
     # General Parameters
     use_scan_matching: true
     use_scan_barycenter: true
-    minimum_travel_distance: 0.25 
-    minimum_travel_heading: 0.25 
+    minimum_travel_distance: 0.5 
+    minimum_travel_heading: 0.5 
     scan_buffer_size: 10
-    scan_buffer_maximum_scan_distance: 15.0
+    scan_buffer_maximum_scan_distance: 12.0
     link_match_minimum_response_fine: 0.1
     link_scan_maximum_distance: 1.5               ##
     loop_search_maximum_distance: 3.0             ##
@@ -50,7 +50,7 @@ slam_toolbox:
     loop_match_minimum_chain_size: 10             ##
     loop_match_maximum_variance_coarse: 3.0       ##
     loop_match_minimum_response_coarse: 0.35      ##
-    loop_match_minimum_response_fine: 0.70        ##
+    loop_match_minimum_response_fine: 0.73        ##
 
     # Correlation Parameters - Correlation Parameters
     correlation_search_space_dimension: 0.5
@@ -59,8 +59,8 @@ slam_toolbox:
 
     # Correlation Parameters - Loop Closure Parameters
     loop_search_space_dimension: 8.0              ##
-    loop_search_space_resolution: 0.1             ##
-    loop_search_space_smear_deviation: 0.10       ##
+    loop_search_space_resolution: 0.05             ##
+    loop_search_space_smear_deviation: 0.025       ##
 
     # Scan Matcher Parameters
     distance_variance_penalty: 0.5                ##
