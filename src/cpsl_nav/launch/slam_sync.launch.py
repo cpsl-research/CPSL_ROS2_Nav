@@ -41,6 +41,10 @@ ARGUMENTS = [
     DeclareLaunchArgument('slam_params_file',
                           default_value='slam.yaml',
                           description='SLAM YAML file in the config folder'),
+    DeclareLaunchArgument('repub_map',
+                          default_value='false',
+                          choices=['true','false'],
+                          description='Re-publishes the map on /map and the /namespace/map topic (used when needing to save the map)'),
     DeclareLaunchArgument('rviz',
                           default_value='false',
                           choices=['true','false'],
@@ -55,6 +59,7 @@ def launch_setup(context, *args, **kwargs):
     autostart = LaunchConfiguration('autostart')
     use_lifecycle_manager = LaunchConfiguration('use_lifecycle_manager')
     slam_params = LaunchConfiguration('slam_params_file')
+    repub_map = LaunchConfiguration('repub_map')
     rviz = LaunchConfiguration('rviz')
 
     namespace_str = namespace.perform(context)
@@ -156,6 +161,18 @@ def launch_setup(context, *args, **kwargs):
             output='screen',
             parameters=[{'use_sim_time': use_sim_time}],
             condition=IfCondition(rviz)
+        ),
+        Node(
+            package='topic_tools',
+            executable='relay',
+            name='map_relay',
+            # namespace=namespace,
+            output='screen',
+            parameters=[
+                {'input_topic': 'map'},
+                {'output_topic': '/map'}
+            ],
+            condition=IfCondition(repub_map)
         )
     ])
 
