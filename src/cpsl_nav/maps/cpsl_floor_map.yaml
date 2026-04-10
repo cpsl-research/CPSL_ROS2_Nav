@@ -1,0 +1,7 @@
+image: /home/cpsl/CPSL_ROS2_Nav/src/cpsl_nav/maps/cpsl_floor_map.pgm
+mode: trinary
+resolution: 0.1
+origin: [-25.8, -17.8, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.25
