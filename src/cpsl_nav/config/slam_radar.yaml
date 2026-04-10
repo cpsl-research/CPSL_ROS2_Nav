@@ -11,61 +11,64 @@ slam_toolbox:
 
     # Ceres Solver Parameters
     ceres_solver_options:
-      num_threads: 2  # Set this based on available cores
+      num_threads: 2
 
     # ROS Parameters
-    odom_frame: odom
+    odom_frame: cpsl_ugv_1/odom
     map_frame: map
-    base_frame: base_link
-    scan_topic: radar_0/scan
+    base_frame: cpsl_ugv_1/base_link
+    scan_topic: scan
     use_map_saver: true
     mode: mapping
 
     debug_logging: false
     throttle_scans: 1
-    transform_publish_period: 0.02 #if 0 never publishes odometry
-    map_update_interval: 1.0
-    resolution: 0.1  # Adjusted for lower-resolution radar data
-    max_laser_range: 15.0  # Slightly increased to handle sparse radar data
-    minimum_time_interval: 0.5
-    transform_timeout: 10.0  #was 0.3 Slightly increased to allow for processing delays
-    tf_buffer_duration: 300.
+    transform_publish_period: 0.02
+    map_update_interval: 0.8   # Slightly slower updates to let the solver stabilize
+    resolution: 0.1            
+    max_laser_range: 10.0
+    minimum_time_interval: 0.05
+    transform_timeout: 0.5     
+    tf_buffer_duration: 30.
     stack_size_to_use: 2000000
-    enable_interactive_mode: false
+    enable_interactive_mode: true
 
     # General Parameters
-    use_scan_matching: false #use local odometry only
-    use_scan_barycenter: false
-    minimum_travel_distance: 0.15  # Slightly increased to avoid excessive updates
-    minimum_travel_heading: 0.15
-    scan_buffer_size: 5  # scan matching disabled
-    scan_buffer_maximum_scan_distance: 12.0 
-    link_match_minimum_response_fine: 0.08 #ignored since scan matching disabled
-    link_scan_maximum_distance: 2.0  #ignored since scan matching disabled
-    loop_search_maximum_distance: 5.0  # Increased to allow larger loop closure detections
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.2
+    minimum_travel_heading: 0.1
+    scan_buffer_size: 70       
+    scan_buffer_maximum_scan_distance: 10.0
+    
+    # --- STRICTOR LOOP CLOSURE LIMITS ---
+    link_match_minimum_response_fine: 0.25  # Increased from 0.05
+    link_scan_maximum_distance: 2.0         # Tightened from 4.0 to prevent "wild" jumps
+    loop_search_maximum_distance: 10.0      
     do_loop_closing: true
-    loop_match_minimum_chain_size: 8  # Reduced to account for sparse features
-    loop_match_maximum_variance_coarse: 5.0  # Increased to tolerate radar noise
-    loop_match_minimum_response_coarse: 0.3  # Slightly relaxed to improve detection
-    loop_match_minimum_response_fine: 0.4  # Slightly relaxed to improve matching
+    loop_match_minimum_chain_size: 10        # Increased from 3 (requires 10 consistent matches)
+    loop_match_maximum_variance_coarse: 3.0 # Reduced from 5.0 (less permissive of "fuzzy" matches)
+    loop_match_minimum_response_coarse: 0.25 # Increased from 0.1
+    loop_match_minimum_response_fine: 0.35   # Increased from 0.15
 
-    # Correlation Parameters - Correlation Parameters
-    correlation_search_space_dimension: 0.7  # Slightly increased to handle uncertainty
-    correlation_search_space_resolution: 0.02
-    correlation_search_space_smear_deviation: 0.15
+    # Correlation Parameters - Local
+    correlation_search_space_dimension: 2.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1 
 
-    # Correlation Parameters - Loop Closure Parameters
-    loop_search_space_dimension: 5.0  # Increased for more robust loop closure
-    loop_search_space_resolution: 0.1
-    loop_search_space_smear_deviation: 0.05
+    # Correlation Parameters - Loop Closure
+    loop_search_space_dimension: 20.0      
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.1 
 
     # Scan Matcher Parameters
-    distance_variance_penalty: 0.3  # Reduced to tolerate radar noise
-    angle_variance_penalty: 0.8  # Reduced to be less strict on rotations
+    # Bringing these back up slightly so Odom acts as a "sanity check"
+    distance_variance_penalty: 0.3
+    angle_variance_penalty: 0.5
 
-    fine_search_angle_offset: 0.005
-    coarse_search_angle_offset: 0.4
-    coarse_angle_resolution: 0.04
-    minimum_angle_penalty: 0.8
-    minimum_distance_penalty: 0.4
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349      # Tightened from 0.6
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.1             # Restored some "trust" to Odom
+    minimum_distance_penalty: 0.1           # Restored some "trust" to Odom
     use_response_expansion: true
