@@ -143,8 +143,8 @@ local_costmap:
       # plugins: ["obstacle_layer","inflation_layer","static_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 4.0
-        inflation_radius: 0.25 #originally 0.45
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.45 #originally 0.45
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
         enabled: true
@@ -244,8 +244,8 @@ global_costmap:
         map_subscribe_transient_local: true
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 4.0
-        inflation_radius: 0.15
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.45
       always_send_full_costmap: true
 
 planner_server:
