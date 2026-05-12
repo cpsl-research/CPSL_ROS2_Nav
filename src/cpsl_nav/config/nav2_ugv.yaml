@@ -3,7 +3,7 @@ bt_navigator:
     use_sim_time: false
     enable_stamped_cmd_vel: false
     global_frame: map
-    robot_base_frame: cpsl_ugv_1/base_link
+    robot_base_frame: cpsl_ugv_1/base_footprint
     odom_topic: odom_repub
     bt_loop_duration: 100
     default_server_timeout: 20
@@ -42,7 +42,7 @@ controller_server:
       yaw_goal_tolerance: 0.25
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
-      time_steps: 20 #was 56
+      time_steps: 30 #was 56
       model_dt: 0.2 # was 0.05
       batch_size: 400 #was 2000
       ax_max: 3.0
@@ -51,7 +51,7 @@ controller_server:
       az_max: 3.5
       vx_std: 0.2
       vy_std: 0.2
-      wz_std: 0.4
+      wz_std: 1.0
       vx_max: 0.5
       vx_min: -0.35
       vy_max: 0.5
@@ -62,7 +62,7 @@ controller_server:
       temperature: 0.3
       gamma: 0.015
       motion_model: "DiffDrive"
-      visualize: false
+      visualize: true
       regenerate_noises: true
       TrajectoryVisualizer:
         trajectory_step: 5
@@ -133,18 +133,18 @@ local_costmap:
       update_frequency: 3.0
       publish_frequency: 3.0
       global_frame: cpsl_ugv_1/odom
-      robot_base_frame: cpsl_ugv_1/base_link
+      robot_base_frame: cpsl_ugv_1/base_footprint
       rolling_window: true
-      width: 5
-      height: 5
+      width: 7
+      height: 7
       resolution: 0.1
       robot_radius: 0.175
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       # plugins: ["obstacle_layer","inflation_layer","static_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.45 #originally 0.45
+        cost_scaling_factor: 1.0
+        inflation_radius: 0.3 #originally 0.45
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
         enabled: true
@@ -157,7 +157,7 @@ local_costmap:
           inf_is_valid: true
           data_type: "LaserScan"
           raytrace_max_range: 5.0
-          raytrace_min_range: 0.0
+          raytrace_min_range: 1.5
           obstacle_max_range: 5.0
           obstacle_min_range: 0.0
       static_layer:
@@ -165,86 +165,41 @@ local_costmap:
         map_subscribe_transient_local: true
       always_send_full_costmap: true
 
-# local_costmap:
-#   local_costmap:
-#     ros__parameters:
-#       update_frequency: 3.0
-#       publish_frequency: 3.0
-#       global_frame: cpsl_ugv_1/odom
-#       robot_base_frame: cpsl_ugv_1/base_link
-#       rolling_window: true
-#       width: 5
-#       height: 5
-#       resolution: 0.1
-#       robot_radius: 0.175
-      
-#       # Change "obstacle_layer" to "voxel_layer"
-#       plugins: ["voxel_layer", "inflation_layer"]
-
-#       voxel_layer:
-#         plugin: "nav2_costmap_2d::VoxelLayer"
-#         enabled: true
-#         publish_voxel_map: false # Set to false to save CPU/Bandwidth
-#         origin_z: -0.5           # Start below the ground to catch tilted radar noise
-#         z_resolution: 0.2        # Height of each voxel layer (m)
-#         z_voxels: 10             # Number of vertical layers (10 * 0.2 = 2m height)
-#         max_obstacle_height: 2.0
-#         unknown_threshold: 15    # Number of unknown voxels in a column to mark as unknown
-#         mark_threshold: 0        # Minimum voxels in a column to mark as an obstacle
-        
-#         observation_sources: scan
-#         scan:
-#           topic: /cpsl_ugv_1/radar_combined/scan
-#           max_obstacle_height: 2.0
-#           min_obstacle_height: -0.5
-#           clearing: true
-#           marking: true
-#           data_type: "LaserScan"
-#           raytrace_max_range: 5.5
-#           raytrace_min_range: 0.0
-#           obstacle_max_range: 5.0
-#           obstacle_min_range: 0.0
-#           inf_is_valid: true
-
-#       inflation_layer:
-#         plugin: "nav2_costmap_2d::InflationLayer"
-#         cost_scaling_factor: 4.0
-#         inflation_radius: 0.45
-
 global_costmap:
   global_costmap:
     ros__parameters:
       use_sim_time: false
       enable_stamped_cmd_vel: false
-      update_frequency: 1.0
-      publish_frequency: 1.0
+      update_frequency: 2.0
+      publish_frequency: 2.0
       global_frame: map
-      robot_base_frame: cpsl_ugv_1/base_link
+      robot_base_frame: cpsl_ugv_1/base_footprint
       robot_radius: 0.175
       resolution: 0.06
       track_unknown_space: true
-      # plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
-      plugins: ["static_layer","inflation_layer"]
-      # obstacle_layer:
-      #   plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
-      #   enabled: true
-      #   observation_sources: scan
-      #   scan:
-      #     topic: /scan
-      #     max_obstacle_height: 2.0
-      #     clearing: true
-      #     marking: true
-      #     data_type: "LaserScan"
-      #     raytrace_max_range: 3.0
-      #     raytrace_min_range: 0.0
-      #     obstacle_max_range: 2.5
-      #     obstacle_min_range: 0.0
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      # plugins: ["static_layer","inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer" #global map also has obstacle layer
+        enabled: true
+        observation_sources: scan
+        scan:
+          topic: /cpsl_ugv_1/radar_combined/scan
+          max_obstacle_height: 2.0
+          clearing: true
+          marking: true
+          inf_is_valid: true
+          data_type: "LaserScan"
+          raytrace_max_range: 5.0
+          raytrace_min_range: 1.5
+          obstacle_max_range: 5.0
+          obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: true
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
+        cost_scaling_factor: 2.0
         inflation_radius: 0.45
       always_send_full_costmap: true
 
@@ -294,7 +249,7 @@ behavior_server:
       plugin: "nav2_behaviors::AssistedTeleop"
     global_frame: map
     local_frame: cpsl_ugv_1/odom
-    robot_base_frame: cpsl_ugv_1/base_link
+    robot_base_frame: cpsl_ugv_1/base_footprint
     transform_tolerance: 1.0
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
@@ -338,7 +293,7 @@ collision_monitor:
   ros__parameters:
     use_sim_time: false
     enable_stamped_cmd_vel: false
-    base_frame_id: "cpsl_ugv_1/base_link"
+    base_frame_id: "cpsl_ugv_1/base_footprint"
     odom_frame_id: "cpsl_ugv_1/odom"
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel"
@@ -378,7 +333,7 @@ docking_server:
     undock_linear_tolerance: 0.05
     undock_angular_tolerance: 0.1
     max_retries: 3
-    base_frame: "cpsl_ugv_1/base_link"
+    base_frame: "cpsl_ugv_1/base_footprint"
     fixed_frame: "cpsl_ugv_1/odom"
     dock_backwards: false
     dock_prestaging_tolerance: 0.5

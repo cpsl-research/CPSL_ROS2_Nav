@@ -1,0 +1,7 @@
+image: north_vicon_map_radar_04292026_rev2.pgm
+mode: trinary
+resolution: 0.100
+origin: [-5.126, -3.464, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196

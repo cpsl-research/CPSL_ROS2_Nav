@@ -9,7 +9,7 @@ amcl:
     alpha4: 0.005  # Translational noise from rotation
     alpha5: 0.005  # Lateral noise
 
-    base_frame_id: "cpsl_ugv_1/base_link"
+    base_frame_id: "cpsl_ugv_1/base_footprint"
     beam_skip_distance: 0.5  # Increased to ignore unreliable radar returns
     beam_skip_error_threshold: 0.75  # Slightly more tolerant before skipping beams
     beam_skip_threshold: 0.3  

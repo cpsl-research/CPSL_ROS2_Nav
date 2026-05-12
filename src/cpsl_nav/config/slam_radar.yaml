@@ -16,7 +16,7 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: cpsl_ugv_1/odom
     map_frame: map
-    base_frame: cpsl_ugv_1/base_link
+    base_frame: cpsl_ugv_1/base_footprint
     scan_topic: scan
     use_map_saver: true
     mode: mapping

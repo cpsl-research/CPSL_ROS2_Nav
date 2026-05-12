@@ -41,8 +41,8 @@ ARGUMENTS = [
         'scan_topic', default_value='/scan',
         description='The LaserScan topic to use for slam (without the namespace)'),
     DeclareLaunchArgument(
-        'base_frame_id', default_value='base_link',
-        description='The frame ID of the base_link frame (without tf pre-fix)'),
+        'base_frame_id', default_value='base_footprint',
+        description='The frame ID of the base_footprint frame (without tf pre-fix)'),
     DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
@@ -65,6 +65,11 @@ ARGUMENTS = [
     ),
     DeclareLaunchArgument(
         'log_level', default_value='info', description='log level'
+    ),
+    DeclareLaunchArgument(
+        'platform',
+        default_value='ugv',
+        description='The platform type: ugv (DifferentialMotionModel) or uav (OmniMotionModel)',
     )
 ]
 
@@ -79,6 +84,7 @@ def launch_setup(context, *args, **kwargs):
     params_file = LaunchConfiguration('params_file')
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
+    platform = LaunchConfiguration('platform')
 
 
     namespace_str = namespace.perform(context)
@@ -108,10 +114,17 @@ def launch_setup(context, *args, **kwargs):
     nav_config_file = PathJoinSubstitution([pkg_cpsl_navigation, 'config', params_str])
 
     #substituting parameters
+    platform_str = platform.perform(context)
+    if platform_str == 'uav':
+        robot_model_type = 'nav2_amcl::OmniMotionModel'
+    else:
+        robot_model_type = 'nav2_amcl::DifferentialMotionModel'
+
     param_substitutions = {
         'scan_topic':scan_topic_str,
         'odom_frame_id':odom_frame,
-        'base_frame_id':base_frame
+        'base_frame_id':base_frame,
+        'robot_model_type': robot_model_type
     }
 
     configured_params = ParameterFile(
