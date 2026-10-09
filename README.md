@@ -38,6 +38,8 @@ sudo apt install ros-jazzy-diagnostic-updater
     ```
 
 2. Once the repository has been cloned, install all required dependencies for the navigation and slam packages
+    - `scripts/deps/slam.sh` installs the system packages mapping needs (`slam_toolbox`, `pointcloud_to_laserscan`); run it as root: `sudo bash scripts/deps/slam.sh`
+    - The rosdep command below installs everything else (including the Nav2 packages)
     ```
     cd CPSL_ROS2_nav
     rosdep install -q -y -r --from-paths src --ignore-src --rosdistro jazzy
