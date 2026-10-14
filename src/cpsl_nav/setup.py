@@ -26,6 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'tf_static_relay = cpsl_nav.tf_static_relay:main',
         ],
     },
 )

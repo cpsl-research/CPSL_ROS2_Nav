@@ -73,7 +73,19 @@ ros2 launch cpsl_nav console_slam.launch.py mode:=localization namespace:=robot1
 - `params_file:=` takes the full path of a platform file. If it is empty, the launch uses the installed `config/slam_<platform>.yaml`. console passes the source-tree path, so an edit takes effect without a rebuild. A platform with no file fails at launch, naming the missing file.
 - `overrides_file:=` (optional) is merged over the platform file. It has the same shape as the platform file (`slam_toolbox: ros__parameters: {max_laser_range: 4.0}`) and may only change keys the platform file already has. A misspelt key fails the launch. If the file is empty or missing, no overrides are applied. console keeps one overrides file per robot.
 - `cpsl_nav/params.py` does the merge. It then sets everything that comes from launch arguments rather than tuning: frames, `scan_topic`, slam_toolbox's `map_name` (stock is the absolute `/map`), map_server's `yaml_filename`, and `use_sim_time`. It also rewrites each root key to `/<namespace>/<node>`. The result is written to a temporary file that the launch deletes on exit. To print what a launch would use: `python3 -m cpsl_nav.params config/slam_create3.yaml --namespace robot1 [--overrides f.yaml]`.
-- **Adding a platform:** add `config/slam_<kind>.yaml` (and, for Nav2, `config/nav2_<kind>.yaml`). Copy the closest existing file, then change what differs. The `config/*` glob in `setup.py` installs it.
+- **Nav2 has its own platform files:** `config/nav2_<kind>.yaml` (`nav2_create3.yaml` from the lab's `nav2_ugv.yaml`, `nav2_rover.yaml` untested on a Rover). Overrides work the same way, e.g. `controller_server: ros__parameters: {FollowPath: {vx_max: 0.2}}` or `local_costmap: local_costmap: ros__parameters: {inflation_layer: {inflation_radius: 0.25}}`. Nav2's root keys are not rewritten (stock `bringup_launch.py` nests the file under the namespace itself). `params.nav2_rewrite` sets every frame key by its last segment (`map`, `odom`, `base_link`/`base_footprint` -> `map_frame`, `odom_frame`, `base_frame`), every scan source to `scan_topic`, every static layer to `map_topic`, and the keepout filters to `/<namespace>/costmap_filter_info`, all as absolute topics. `odom_topic`/`cmd_vel_topic` replace the file's only if given. `python3 -m cpsl_nav.params config/nav2_create3.yaml --mode nav2 --namespace robot1` prints the result.
+- **Adding a platform:** add `config/slam_<kind>.yaml` and `config/nav2_<kind>.yaml`. Copy the closest existing file, then change what differs. Keep `filters: ["keepout_filter"]` in both costmaps. The `config/*` glob in `setup.py` installs it.
+
+### Navigation (Nav2) for console
+
+```
+ros2 launch cpsl_nav console_nav.launch.py namespace:=robot1 platform:=create3 \
+    scan_topic:=/robot1/scan [overrides_file:=f.yaml] [keepout_mask:=/full/path/room.keepout.yaml]
+```
+
+- Runs stock `nav2_bringup` `bringup_launch.py` in the namespace, navigation only (no slam, no localization: `map -> odom` comes from `console_slam.launch.py`, either mode). Its nodes read tf on `/<namespace>/tf` and `/<namespace>/tf_static`. With a namespace, `tf_static_relay` copies `/tf_static` onto `/<namespace>/tf_static`, so sensor mounts reach Nav2.
+- **Keepout (no-go zones):** `costmap_filter_info_server`, `filter_mask_server` and `lifecycle_manager_costmap_filters` run in the namespace. The mask is a map_server map in the map frame. Black (occupied) cells are keepout and everything else is ignored. Without `keepout_mask` the launch serves a one-cell free mask, which means no zones. To replace the mask without restarting Nav2: `ros2 service call /<ns>/filter_mask_server/load_map nav2_msgs/srv/LoadMap "{map_url: /full/path/x.keepout.yaml}"`. Nav2 applies costmap filters after the inflation layer, so a zone is not inflated. Rasterize each zone grown by at least the robot's radius plus a margin, or the planner will route the robot's centre along the zone's edge.
+- `ros2 launch cpsl_nav console_nav.launch.py --show-args` lists all arguments.
 
 ### Map storage convention
 

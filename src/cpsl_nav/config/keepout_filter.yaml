@@ -1,0 +1,24 @@
+# Keepout filter servers for console_nav.launch.py (console's no-go zones).
+# Platform-independent: one file for every platform kind. The launch sets the
+# topics (absolute, under the robot's namespace), frame_id (map_frame) and the
+# mask file; what is left here is how the mask's values are read.
+#
+# The mask is a map_server map on the active map's grid: black (occupied)
+# cells are keepout, everything else is left alone. With no zones the launch
+# serves a one-cell free mask. console replaces the mask at run time with
+# filter_mask_server's load_map service: no Nav2 restart.
+costmap_filter_info_server:
+  ros__parameters:
+    use_sim_time: false
+    type: 0                 # 0 = keepout
+    filter_info_topic: costmap_filter_info
+    mask_topic: keepout_filter_mask
+    base: 0.0
+    multiplier: 1.0
+
+filter_mask_server:
+  ros__parameters:
+    use_sim_time: false
+    frame_id: map
+    topic_name: keepout_filter_mask
+    yaml_filename: ""
