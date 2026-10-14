@@ -8,9 +8,14 @@
 #   slam_toolbox            - online async mapping
 #   pointcloud_to_laserscan - turns a lidar point cloud into the scan
 #                             slam_toolbox consumes
+#   nav2_map_server, nav2_amcl, nav2_lifecycle_manager
+#                           - localization on a saved map
+#                             (console_slam.launch.py mode:=localization)
 #
 # The Nav2 packages (nav2_bringup etc.) are not here; they are installed by
 # rosdep as the README describes.
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
-apt_ensure "ros-${ROS_DISTRO:-jazzy}-slam-toolbox" "ros-${ROS_DISTRO:-jazzy}-pointcloud-to-laserscan"
+D="${ROS_DISTRO:-jazzy}"
+apt_ensure "ros-$D-slam-toolbox" "ros-$D-pointcloud-to-laserscan" \
+    "ros-$D-nav2-map-server" "ros-$D-nav2-amcl" "ros-$D-nav2-lifecycle-manager"

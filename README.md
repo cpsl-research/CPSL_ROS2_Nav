@@ -38,7 +38,7 @@ sudo apt install ros-jazzy-diagnostic-updater
     ```
 
 2. Once the repository has been cloned, install all required dependencies for the navigation and slam packages
-    - `scripts/deps/slam.sh` installs the system packages mapping needs (`slam_toolbox`, `pointcloud_to_laserscan`); run it as root: `sudo bash scripts/deps/slam.sh`
+    - `scripts/deps/slam.sh` installs the system packages mapping and localization need (`slam_toolbox`, `pointcloud_to_laserscan`, `nav2_map_server`, `nav2_amcl`, `nav2_lifecycle_manager`); run it as root: `sudo bash scripts/deps/slam.sh`
     - `scripts/deps/nav2.sh` installs the system packages Nav2 needs (`nav2_bringup`, MPPI controller, collision monitor, docking, `diagnostic_updater`); run it as root: `sudo bash scripts/deps/nav2.sh`
     - The rosdep command below installs everything else (including the Nav2 packages)
     ```
