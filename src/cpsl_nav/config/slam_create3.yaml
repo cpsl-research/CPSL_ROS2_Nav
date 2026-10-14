@@ -1,0 +1,131 @@
+# console_slam.launch.py parameters for the iRobot Create 3 (console platform kind `create3`).
+#
+# One full file per console platform kind (`slam_<kind>.yaml`); see the README,
+# "Parameters for console". Create 3: its own odom -> base_link on /<namespace>/tf, unprefixed frame
+# names (console passes tf_topic:=/<namespace>/tf).
+#
+# Sections: slam_toolbox (mode:=mapping), map_server + amcl (mode:=localization).
+# Root keys are short node names; cpsl_nav/params.py rewrites them to
+# /<namespace>/<node> and sets, from the launch arguments, everything that
+# depends on how the robot is wired rather than on tuning: frames
+# (base_frame/odom_frame/map_frame, base_frame_id/odom_frame_id/global_frame_id),
+# scan_topic, slam_toolbox's map_name, map_server's yaml_filename/frame_id,
+# use_sim_time. The frame values below are only what the launch defaults to.
+# A per-robot overrides file may change any key that is present here, and only those.
+
+slam_toolbox:
+  ros__parameters:
+    # slam_toolbox's mapper_params_online_async.yaml (2.8.x), with the lab's
+    # choices from config/slam.yaml where they differ; each one is marked.
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+    ceres_solver_options:
+      num_threads: 2                 # lab (stock: unset, Ceres default)
+
+    # Rewritten by the launch (see header).
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link               # stock: base_footprint
+    scan_topic: /scan
+    use_map_saver: true
+    mode: mapping
+
+    debug_logging: false
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    map_update_interval: 1.0         # lab (stock 5.0): the GUI shows the map growing
+    resolution: 0.05
+    max_laser_range: 12.0            # lab (stock 20.0); console knob
+    minimum_time_interval: 0.5
+    transform_timeout: 0.2
+    tf_buffer_duration: 30.0
+    stack_size_to_use: 40000000      # stock (lab 2000000): serializing a large map needs it
+    enable_interactive_mode: true
+
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.1     # lab (stock 0.5); console knob
+    minimum_travel_heading: 0.1      # lab (stock 0.5)
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+
+    correlation_search_space_dimension: 0.5    # console knob
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+    min_pass_through: 2
+    occupancy_threshold: 0.1
+
+map_server:
+  ros__parameters:
+    # yaml_filename, frame_id and topic_name are set by the launch.
+    yaml_filename: ""
+
+amcl:
+  ros__parameters:
+    # The lab's config/localization.yaml values. Rewritten by the launch:
+    # base_frame_id, odom_frame_id, global_frame_id, scan_topic, map_topic.
+    alpha1: 0.2
+    alpha2: 0.2
+    alpha3: 0.2
+    alpha4: 0.2
+    alpha5: 0.2
+    base_frame_id: base_link
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: false
+    global_frame_id: map
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 100.0
+    laser_min_range: -1.0
+    laser_model_type: likelihood_field
+    max_beams: 60
+    max_particles: 2000
+    min_particles: 500
+    odom_frame_id: odom
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
+    robot_model_type: nav2_amcl::DifferentialMotionModel
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.2
+    update_min_d: 0.25
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    scan_topic: scan
+    # Wait for an initial pose on <namespace>/initialpose (console's Set pose).
+    set_initial_pose: false

@@ -51,6 +51,34 @@ sudo apt install ros-jazzy-diagnostic-updater
     source install/setup.bash
     ```
 
+## Console: mapping and localization
+
+[console](https://github.com/cpsl-research/console) runs mapping and localization from this repo with one launch file, `launch/console_slam.launch.py`. It can be used without console too.
+
+```
+ros2 launch cpsl_nav console_slam.launch.py namespace:=robot1 scan_topic:=/livox/scan
+ros2 launch cpsl_nav console_slam.launch.py mode:=localization namespace:=robot1 \
+    scan_topic:=/livox/scan map_yaml:=/full/path/room.yaml
+```
+
+- `mode:=mapping` runs slam_toolbox (online async). The launch file configures and activates it. The map is published on `/<namespace>/map`, and `map -> odom` on the tf topic.
+- `mode:=localization` runs map_server, serving `map_yaml` on `/<namespace>/map`, and AMCL, both started by a nav2 lifecycle manager. AMCL publishes nothing until it gets an initial pose on `/<namespace>/initialpose` (`geometry_msgs/PoseWithCovarianceStamped`, frame `map`). After that it publishes `map -> odom` on the tf topic and its estimate on `/<namespace>/amcl_pose`.
+- **tf:** every node reads and writes tf on `tf_topic`. The default is `/<namespace>/tf` (or `/tf` with no namespace). Static tf is read from `tf_static_topic` (default `/tf_static`). Frame names are used as given, with no prefix added. The Create 3 publishes `odom -> base_link` unprefixed on `/<namespace>/tf`, so the defaults fit it.
+- `cloud_topic:=<PointCloud2>` adds `pointcloud_to_laserscan`, which turns the cloud into a scan on `scan_topic` (frame `base_frame`).
+- `ros2 launch cpsl_nav console_slam.launch.py --show-args` lists all arguments.
+
+### Parameters for console
+
+- **One full file per console platform kind:** `config/slam_<kind>.yaml`, where `<kind>` is console's platform kind (`create3`, `rover`). There is no shared base file. Each file holds the `slam_toolbox` section (mapping) and the `map_server` and `amcl` sections (localization). The comments in each file say which values differ from slam_toolbox's stock `mapper_params_online_async.yaml` and why. `slam_rover.yaml` has not been tested on a Rover yet.
+- `params_file:=` takes the full path of a platform file. If it is empty, the launch uses the installed `config/slam_<platform>.yaml`. console passes the source-tree path, so an edit takes effect without a rebuild. A platform with no file fails at launch, naming the missing file.
+- `overrides_file:=` (optional) is merged over the platform file. It has the same shape as the platform file (`slam_toolbox: ros__parameters: {max_laser_range: 4.0}`) and may only change keys the platform file already has. A misspelt key fails the launch. If the file is empty or missing, no overrides are applied. console keeps one overrides file per robot.
+- `cpsl_nav/params.py` does the merge. It then sets everything that comes from launch arguments rather than tuning: frames, `scan_topic`, slam_toolbox's `map_name` (stock is the absolute `/map`), map_server's `yaml_filename`, and `use_sim_time`. It also rewrites each root key to `/<namespace>/<node>`. The result is written to a temporary file that the launch deletes on exit. To print what a launch would use: `python3 -m cpsl_nav.params config/slam_create3.yaml --namespace robot1 [--overrides f.yaml]`.
+- **Adding a platform:** add `config/slam_<kind>.yaml` (and, for Nav2, `config/nav2_<kind>.yaml`). Copy the closest existing file, then change what differs. The `config/*` glob in `setup.py` installs it.
+
+### Map storage convention
+
+A map is `<name>.yaml` + `<name>.pgm` (the map_server format), optionally with `<name>.keepout.yaml` + `<name>.keepout.pgm` (a keepout mask) and `<name>.zones.json`. console saves to its own `data/maps/` by default. It can also save to this repo's `src/cpsl_nav/maps/`, but only into the working tree: whether to commit a map is the user's decision.
+
 ## Tutorials
 
 ### 1. Generate a map using the slam_toolbox [single agent]:
