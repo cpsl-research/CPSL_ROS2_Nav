@@ -67,6 +67,10 @@ ros2 launch cpsl_nav console_slam.launch.py mode:=localization namespace:=robot1
 - `cloud_topic:=<PointCloud2>` adds `pointcloud_to_laserscan`, which turns the cloud into a scan on `scan_topic` (frame `base_frame`).
 - `ros2 launch cpsl_nav console_slam.launch.py --show-args` lists all arguments.
 
+### TF and topics
+
+Console runs everything on the robot's own `/<namespace>/tf` and `/<namespace>/tf_static` with unprefixed frame names. `console_slam.launch.py` defaults `tf_topic` / `tf_static_topic` to the relative `tf` / `tf_static`, which resolve in the namespace. The protocol is in console's [docs/TF_AND_TOPICS.md](https://github.com/cpsl-research/console/blob/feature/gui-redesign/docs/TF_AND_TOPICS.md).
+
 ### Parameters for console
 
 - **One full file per console platform kind:** `config/slam_<kind>.yaml`, where `<kind>` is console's platform kind (`create3`, `rover`). There is no shared base file. Each file holds the `slam_toolbox` section (mapping) and the `map_server` and `amcl` sections (localization). The comments in each file say which values differ from slam_toolbox's stock `mapper_params_online_async.yaml` and why. `slam_rover.yaml` has not been tested on a Rover yet.
@@ -83,7 +87,7 @@ ros2 launch cpsl_nav console_nav.launch.py namespace:=robot1 platform:=create3 \
     scan_topic:=/robot1/scan [overrides_file:=f.yaml] [keepout_mask:=/full/path/room.keepout.yaml]
 ```
 
-- Runs stock `nav2_bringup` `bringup_launch.py` in the namespace, navigation only (no slam, no localization: `map -> odom` comes from `console_slam.launch.py`, either mode). Its nodes read tf on `/<namespace>/tf` and `/<namespace>/tf_static`. With a namespace, `tf_static_relay` copies `/tf_static` onto `/<namespace>/tf_static`, so sensor mounts reach Nav2.
+- Runs stock `nav2_bringup` `bringup_launch.py` in the namespace, navigation only (no slam, no localization: `map -> odom` comes from `console_slam.launch.py`, either mode). Its nodes read tf on `/<namespace>/tf` and `/<namespace>/tf_static`. `tf_static_relay` (default off) can copy `/tf_static` onto `/<namespace>/tf_static` when nothing publishes it there.
 - **Keepout (no-go zones):** `costmap_filter_info_server`, `filter_mask_server` and `lifecycle_manager_costmap_filters` run in the namespace. The mask is a map_server map in the map frame. Black (occupied) cells are keepout and everything else is ignored. Without `keepout_mask` the launch serves a one-cell free mask, which means no zones. To replace the mask without restarting Nav2: `ros2 service call /<ns>/filter_mask_server/load_map nav2_msgs/srv/LoadMap "{map_url: /full/path/x.keepout.yaml}"`. Nav2 applies costmap filters after the inflation layer, so a zone is not inflated. Rasterize each zone grown by at least the robot's radius plus a margin, or the planner will route the robot's centre along the zone's edge.
 - `ros2 launch cpsl_nav console_nav.launch.py --show-args` lists all arguments.
 

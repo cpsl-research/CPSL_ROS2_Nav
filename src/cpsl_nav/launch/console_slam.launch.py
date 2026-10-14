@@ -10,8 +10,9 @@ mode:=localization  map_server serving `map_yaml` on <namespace>/map, and AMCL
                     publishes map -> <odom_frame> on `tf_topic`.
 
 Frames and tf, the part that decides whether anything works. Every node here
-reads and writes tf on `tf_topic` (default /<namespace>/tf, or /tf with no
-namespace) and static tf on `tf_static_topic` (default /tf_static): the
+reads and writes tf on `tf_topic` (default relative `tf`, i.e. /<namespace>/tf,
+or /tf with no namespace) and static tf on `tf_static_topic` (default relative
+`tf_static`): see console's docs/TF_AND_TOPICS.md. The
 remaps are explicit because stock launch files silently stay on /tf. Frame
 names are passed as given (no tf prefix is added): the Create 3 publishes
 `odom -> base_link`, unprefixed, on /<namespace>/tf.
@@ -53,11 +54,12 @@ ARGUMENTS = [
                           description='Optional YAML merged over params_file '
                                       '(same shape; existing keys only). '
                                       'Empty or missing: no overrides'),
-    DeclareLaunchArgument('tf_topic', default_value='',
-                          description='tf topic the nodes read and publish on '
-                                      '(default /<namespace>/tf, or /tf with no namespace)'),
-    DeclareLaunchArgument('tf_static_topic', default_value='/tf_static',
-                          description='Static tf topic the nodes read'),
+    DeclareLaunchArgument('tf_topic', default_value='tf',
+                          description='tf topic the nodes read and publish on; relative '
+                                      'names resolve in the namespace (/<namespace>/tf)'),
+    DeclareLaunchArgument('tf_static_topic', default_value='tf_static',
+                          description='Static tf topic the nodes read; relative names '
+                                      'resolve in the namespace'),
     DeclareLaunchArgument('scan_topic', default_value='scan',
                           description='LaserScan topic (relative names resolve in the namespace)'),
     DeclareLaunchArgument('cloud_topic', default_value='',
@@ -86,8 +88,8 @@ def launch_setup(context, *args, **kwargs):
     platform = _arg(context, 'platform')
     params_file = _arg(context, 'params_file')
     overrides_file = _arg(context, 'overrides_file')
-    tf_topic = _arg(context, 'tf_topic') or (f'/{namespace}/tf' if namespace else '/tf')
-    tf_static_topic = _arg(context, 'tf_static_topic') or '/tf_static'
+    tf_topic = _arg(context, 'tf_topic') or 'tf'
+    tf_static_topic = _arg(context, 'tf_static_topic') or 'tf_static'
     scan_topic = _arg(context, 'scan_topic') or 'scan'
     cloud_topic = _arg(context, 'cloud_topic')
     base_frame = _arg(context, 'base_frame')
@@ -97,8 +99,6 @@ def launch_setup(context, *args, **kwargs):
     use_sim_time = _arg(context, 'use_sim_time') == 'true'
     log_level = _arg(context, 'log_level')
 
-    if not tf_topic.startswith('/') or not tf_static_topic.startswith('/'):
-        raise RuntimeError('tf_topic and tf_static_topic must be absolute topic names')
     if not params_file:
         params_file = cparams.platform_file(
             os.path.join(get_package_share_directory('cpsl_nav'), 'config'), platform)

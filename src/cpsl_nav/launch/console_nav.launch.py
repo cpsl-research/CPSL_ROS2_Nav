@@ -13,7 +13,8 @@ Runs, in the robot's namespace:
   ``nav2_<platform>.yaml`` carry ``filters: [keepout_filter]``. No
   ``keepout_mask`` = a one-cell free mask, i.e. no zones. A new mask is
   loaded at run time with ``/<ns>/filter_mask_server/load_map``;
-* ``tf_static_relay`` (with a namespace): copies /tf_static onto
+* ``tf_static_relay`` (with a namespace; off by default, the robot now
+  publishes /<ns>/tf_static itself): copies /tf_static onto
   /<ns>/tf_static.
 
 tf: stock bringup remaps /tf and /tf_static to the relative ``tf`` and
@@ -74,7 +75,7 @@ ARGUMENTS = [
     DeclareLaunchArgument('keepout_mask', default_value='',
                           description='Full path of the keepout mask YAML (map_server format, '
                                       'black = keepout). Empty: no zones'),
-    DeclareLaunchArgument('tf_static_relay', default_value='true', choices=['true', 'false'],
+    DeclareLaunchArgument('tf_static_relay', default_value='false', choices=['true', 'false'],
                           description='With a namespace, copy /tf_static onto '
                                       '/<namespace>/tf_static'),
     DeclareLaunchArgument('use_sim_time', default_value='false', choices=['true', 'false'],
