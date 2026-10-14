@@ -87,6 +87,21 @@ ros2 launch cpsl_nav console_nav.launch.py namespace:=robot1 platform:=create3 \
 - **Keepout (no-go zones):** `costmap_filter_info_server`, `filter_mask_server` and `lifecycle_manager_costmap_filters` run in the namespace. The mask is a map_server map in the map frame. Black (occupied) cells are keepout and everything else is ignored. Without `keepout_mask` the launch serves a one-cell free mask, which means no zones. To replace the mask without restarting Nav2: `ros2 service call /<ns>/filter_mask_server/load_map nav2_msgs/srv/LoadMap "{map_url: /full/path/x.keepout.yaml}"`. Nav2 applies costmap filters after the inflation layer, so a zone is not inflated. Rasterize each zone grown by at least the robot's radius plus a margin, or the planner will route the robot's centre along the zone's edge.
 - `ros2 launch cpsl_nav console_nav.launch.py --show-args` lists all arguments.
 
+### Exploration: frontiers or wander
+
+```
+ros2 launch cpsl_nav console_explore.launch.py mode:=frontier namespace:=robot1
+ros2 launch cpsl_nav console_explore.launch.py mode:=wander namespace:=robot1
+```
+
+Both need `console_nav.launch.py` and a map (`console_slam.launch.py`, either mode) in the same namespace. Each sends its own `NavigateToPose` goals, one at a time, and avoids keepout zones (it reads the mask on `/<ns>/keepout_filter_mask`).
+
+- `mode:=frontier` (`/<ns>/frontier_explore`) drives to the nearest large frontier, where known free space meets unknown space. It cancels a goal once its frontier has been mapped, blacklists goals that fail, and reports `done` / `no frontiers` when nothing is left.
+- `mode:=wander` (`/<ns>/wander`) drives to random free goals at least 1 m away. Each goal must keep clear of obstacles and unknown space, and is checked for a path with Nav2's `compute_path_to_pose` before it is sent. Wander needs enough of the map to be known: it reports `no free goal far enough away` until there is.
+- Status: JSON on `/<ns>/<node>/status` (`std_msgs/String`, reliable and transient local), every second: `mode`, `state` (`waiting`, `searching`, `navigating`, `done`, `stopped`), `detail`, `goal`, `goals_sent`, `goals_succeeded`, `goals_failed`, `known_m2`, plus `frontiers`/`blacklisted` or `rejected`.
+- Stop with SIGINT. The node cancels its active goal, waits up to 1.5 s for Nav2 to confirm, publishes `stopped` and exits 0.
+- The detection, clustering and sampling code is `cpsl_nav/grid.py` (numpy, no ROS) and is tested in `test/test_grid.py`.
+
 ### Map storage convention
 
 A map is `<name>.yaml` + `<name>.pgm` (the map_server format), optionally with `<name>.keepout.yaml` + `<name>.keepout.pgm` (a keepout mask) and `<name>.zones.json`. console saves to its own `data/maps/` by default. It can also save to this repo's `src/cpsl_nav/maps/`, but only into the working tree: whether to commit a map is the user's decision.

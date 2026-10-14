@@ -27,6 +27,8 @@ setup(
     entry_points={
         'console_scripts': [
             'tf_static_relay = cpsl_nav.tf_static_relay:main',
+            'frontier_explore = cpsl_nav.frontier_explore:main',
+            'wander = cpsl_nav.wander:main',
         ],
     },
 )
