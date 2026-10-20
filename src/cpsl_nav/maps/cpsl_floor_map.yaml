@@ -1,4 +1,4 @@
-image: /home/cpsl/CPSL_ROS2_Nav/src/cpsl_nav/maps/cpsl_floor_map.pgm
+image: cpsl_floor_map.pgm
 mode: trinary
 resolution: 0.1
 origin: [-25.8, -17.8, 0]
