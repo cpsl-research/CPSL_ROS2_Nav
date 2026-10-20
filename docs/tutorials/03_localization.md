@@ -20,9 +20,8 @@ happens yet: AMCL publishes no `map -> odom` until it is told where the robot is
 ros2 topic list | grep -E "map|amcl|initialpose"    # /cpsl_ugv_1/map, /cpsl_ugv_1/amcl_pose, /cpsl_ugv_1/initialpose
 ```
 
-The map is served on `/cpsl_ugv_1/map`. The shipped maps in `src/cpsl_nav/maps/` (for example
-`cpsl.yaml`) are lab rooms and are only useful in those rooms. A map's `image:` is a path relative
-to its `.yaml`, so keep the pair together.
+The map is served on `/cpsl_ugv_1/map`. A map's `image:` is a path relative to its `.yaml`, so
+keep the pair together.
 
 ## 2. Give the initial pose
 
@@ -40,7 +39,8 @@ Set **Fixed Frame** to `map`, add `/cpsl_ugv_1/map`, `/cpsl_ugv_1/scan` and
 drag on the map from the robot's position in the direction it faces. `rviz_nav.launch.py` remaps
 RViz's `/initialpose` into the namespace, which is why the click reaches AMCL.
 
-Or from a terminal (here the robot is at the map's origin, facing +x):
+Or from a terminal. Put the robot's real pose in `x`, `y` (metres, in the map frame) and the
+orientation; this example is the map's origin, facing +x:
 
 ```bash
 ros2 topic pub --once /cpsl_ugv_1/initialpose geometry_msgs/msg/PoseWithCovarianceStamped \
@@ -55,8 +55,8 @@ ros2 topic echo /cpsl_ugv_1/tf --once               # now includes map -> odom
 ```
 
 You should see the particle cloud collapse around the robot and the scan line up with the walls
-of the map. If the scan is rotated or offset from the walls, the initial pose was wrong: send it
-again. Driving the robot a few metres (teleop as in tutorial 2) lets the filter converge before
+of the map. If the scan is rotated or offset from the walls, the initial pose was wrong: repeat the
+click or the `ros2 topic pub` above with a better pose. Driving the robot a few metres (teleop as in tutorial 2) lets the filter converge before
 you start Nav2.
 
 AMCL parameters (particle counts, motion noise, update thresholds) are the `amcl:` section of

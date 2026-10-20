@@ -52,19 +52,11 @@ local_costmap:
       inflation_layer: {inflation_radius: 0.25}
 ```
 
-## 3. What the launch sets for you
+## 3. What you cannot set in a file
 
-After the merge, `cpsl_nav/params.py` overwrites what comes from launch arguments, not tuning, so
-editing these in a file has no effect:
-
-- slam: frames, `scan_topic`, `mode`, slam_toolbox's `map_name` (the stock value is the absolute
-  `/map`), map_server's `yaml_filename`, `frame_id`, `use_sim_time`, and each root key, which becomes
-  `/<namespace>/<node>`.
-- Nav2: every frame key (`global_frame`, `robot_base_frame`, `local_frame`, `base_frame`,
-  `base_frame_id`, `odom_frame_id`, `fixed_frame`) by its last segment (`map`, `odom`,
-  `base_link` or `base_footprint`); every scan source to `scan_topic`; every static layer to
-  `map_topic`; the keepout filters' topics; `odom_topic` / `cmd_vel_topic` only if given. Nav2's root
-  keys are not rewritten, because `bringup_launch.py` nests the file under the namespace itself.
+Frames, the scan, map, odometry and command topics, `mode`, and each root key's namespace come from
+the launch arguments, not from the file; the launch overwrites them. Change them with the
+arguments (`base_frame`, `scan_topic`, ...). The full list is in [DEVELOPING](../DEVELOPING.md#paramspy-rules).
 
 ## 4. See the result before you launch
 

@@ -5,6 +5,15 @@ the robot's scan. Start from [tutorial 3](03_localization.md) (or a mapping run 
 [tutorial 2](02_mapping.md)): **one** of them must be running, because Nav2 reads `map -> odom`
 from it and `console_nav.launch.py` starts neither slam nor AMCL.
 
+What runs where, for a full session (each in its own sourced terminal):
+
+| Terminal | Command | Tutorial |
+|---|---|---|
+| 1 | `console_slam.launch.py mode:=localization map_yaml:=...` (or `mode:=mapping`) | 2-3 |
+| 2 | `console_nav.launch.py` | this page |
+| 3 | `rviz_nav.launch.py` (optional) | 3 |
+| 4 | `console_explore.launch.py` (optional) | 5 |
+
 ## 1. Start Nav2
 
 In a new terminal (sourced as usual):
@@ -53,22 +62,8 @@ ros2 action send_goal /cpsl_ugv_1/navigate_to_pose nav2_msgs/action/NavigateToPo
 Cancel with Ctrl-C on that command, or stop Nav2 with Ctrl-C in its terminal. Keep a hand on the
 robot's own stop the first time.
 
-## 3. The older launch files
-
-`slam_sync.launch.py`, `localization.launch.py` and `nav2.launch.py` are the lab's first launch
-files, kept because they work for the robots they were written for. They differ from the
-`console_*` ones in a way that decides whether they work for you:
-
-- They **prefix frames with the namespace**: with `namespace:=cpsl_ugv_1`, slam and AMCL look for
-  `cpsl_ugv_1/odom` and `cpsl_ugv_1/base_footprint`, and they read the **global** `/tf`.
-- `nav2.launch.py` loads `config/nav2_ugv.yaml`, which hard-codes `cpsl_ugv_1/odom`,
-  `cpsl_ugv_1/base_footprint` and `/cpsl_ugv_1/radar_combined/scan`.
-
-A robot that follows the [tf protocol](https://github.com/cpsl-research/console/blob/main/docs/TF_AND_TOPICS.md)
-(unprefixed frames, `/<ns>/tf`) therefore needs the `console_*` launch files of tutorials 2-4.
-Use the older ones for a simulation or robot built with tf prefixes, after editing a copy of the
-frame and topic keys in `config/nav2_ugv.yaml` (every `global_frame`, `robot_base_frame`,
-`odom_topic`, scan `topic` and `enable_stamped_cmd_vel`). Each lists its arguments with
-`--show-args`.
+The older launch files (`slam_sync`, `localization`, `nav2`) prefix frames with the namespace and read
+global `/tf`, so they do not suit a robot that follows the tf protocol; use the `console_*` files
+above. Their arguments: `--show-args`.
 
 Next: [keepout zones and exploration](05_explore_and_keepout.md).

@@ -54,8 +54,8 @@ ros2 launch cpsl_nav console_explore.launch.py mode:=wander namespace:=cpsl_ugv_
 
 - **`frontier`** (node `/cpsl_ugv_1/frontier_explore`) drives to the nearest large frontier, where
   known free space meets unknown space. It cancels a goal once its frontier has been mapped,
-  blacklists goals that fail, and reports `done` / `no frontiers` when nothing is left. With
-  `mode:=mapping` the map grows as the robot explores.
+  blacklists goals that fail, and reports `done` / `no frontiers` when nothing is left. If
+  `console_slam mode:=mapping` is running, the map grows as the robot explores.
 - **`wander`** (node `/cpsl_ugv_1/wander`) drives to random free goals at least 1 m away, each
   checked for a path with Nav2's `compute_path_to_pose` before it is sent. It reports `no free goal
   far enough away` until enough of the map is known. `seed:=N` makes the sequence repeatable.
@@ -74,7 +74,7 @@ It is JSON, once a second: `mode`, `state` (`waiting`, `searching`, `navigating`
 `frontiers` / `blacklisted` (frontier) or `rejected` (wander).
 
 Stop with Ctrl-C (SIGINT): the node cancels its active goal, waits up to 1.5 s for Nav2 to confirm,
-publishes `stopped` and exits 0. When exploring with `mode:=mapping`, save the map afterwards
+publishes `stopped` and exits 0. If you explored while mapping (`console_slam mode:=mapping`), save the map afterwards
 (tutorial 2, section 3).
 
 Next: [tuning parameters](06_tuning_params.md).

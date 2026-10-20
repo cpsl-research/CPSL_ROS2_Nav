@@ -37,14 +37,12 @@ In a second terminal:
 
 ```bash
 ros2 topic list | grep map                 # /cpsl_ugv_1/map
-ros2 topic echo /cpsl_ugv_1/tf --once      # after the first scans: map -> odom appears among the transforms
 ros2 launch cpsl_nav rviz_nav.launch.py namespace:=cpsl_ugv_1
 ```
 
 `rviz_nav.launch.py` starts RViz with `/tf`, `/tf_static`, `/initialpose` and `/goal_pose`
 remapped into the namespace. In RViz set **Fixed Frame** to `map`, then **Add > By topic** for
-`/cpsl_ugv_1/map` and `/cpsl_ugv_1/scan`. (The `.rviz` files in `rviz_cfgs/` come from lab robots
-and name their topics; expect red displays until you point them at yours.)
+`/cpsl_ugv_1/map` and `/cpsl_ugv_1/scan`.
 
 ## 3. Drive and save
 
@@ -53,6 +51,8 @@ Drive slowly and close loops by returning to places you have been. For example:
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap /cmd_vel:=/cpsl_ugv_1/cmd_vel
 ```
+
+(`sudo apt install ros-jazzy-teleop-twist-keyboard` if it is missing; or use your robot's own controller.)
 
 Save the occupancy map (a `.yaml` and a `.pgm`, what tutorials 3-5 load):
 
@@ -70,20 +70,5 @@ ros2 service call /cpsl_ugv_1/slam_toolbox/serialize_map \
 ```
 
 This writes `room.posegraph` and `room.data`. Stop mapping with Ctrl-C in the launch terminal.
-
-## 4. Continue a map later
-
-slam_toolbox can start from a saved pose graph. Copy the platform file, add two parameters under
-`slam_toolbox: ros__parameters:` (names from slam_toolbox's own
-`mapper_params_online_async.yaml`), and pass the copy as `params_file`:
-
-```bash
-cp src/cpsl_nav/config/slam_create3.yaml ~/maps/slam_continue.yaml
-# add:   map_file_name: /home/<you>/maps/room       (no extension)
-#        map_start_pose: [0.0, 0.0, 0.0]            (where the robot is now, in the OLD map's frame)
-ros2 launch cpsl_nav console_slam.launch.py namespace:=cpsl_ugv_1 params_file:=$HOME/maps/slam_continue.yaml
-```
-
-`config/slam_from_previous.yaml` is a lab example of the same two keys.
 
 Next: [localize on the saved map](03_localization.md).

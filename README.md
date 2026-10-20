@@ -7,11 +7,12 @@ without any other CPSL repository, on any robot that provides the topics listed 
 
 - Host: **Ubuntu 24.04**, **ROS 2 Jazzy** ([official install guide](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html));
   Gazebo Harmonic if you simulate.
-- Platform parameter files: `create3` (the reference) and `rover` (its header says it has not been run on a Rover).
+- Platform parameter files: `create3` (the only tested profile) and `rover` (its header says it has
+  not been run on a Rover). For another chassis see [tutorial 1, section 4](docs/tutorials/01_install_and_build.md#4-is-my-robot-ready).
 
 ## What your robot must provide
 
-Inside one non-empty namespace `<ns>` (these docs use `cpsl_ugv_1`), following
+Inside one namespace `<ns>` (these docs use `cpsl_ugv_1`; an empty one also works), following
 [TF_AND_TOPICS.md](https://github.com/cpsl-research/console/blob/main/docs/TF_AND_TOPICS.md):
 
 | Topic | Type | Content |
@@ -22,7 +23,8 @@ Inside one non-empty namespace `<ns>` (these docs use `cpsl_ugv_1`), following
 | `/<ns>/odom` | `nav_msgs/Odometry` | for Nav2 |
 | `/<ns>/cmd_vel` | `geometry_msgs/Twist` | accepted by the robot (not `TwistStamped`) |
 
-Frames are never prefixed: `map`, `odom`, `base_link`. The launch files add `map -> odom`.
+Frames are never prefixed: `map`, `odom`, `base_link`. The launch files add `map -> odom`. Five commands check all of this:
+[Is my robot ready?](docs/tutorials/01_install_and_build.md#4-is-my-robot-ready).
 
 ## Quick start
 
@@ -30,6 +32,7 @@ Frames are never prefixed: `map`, `odom`, `base_link`. The launch files add `map
 git clone https://github.com/cpsl-research/CPSL_ROS2_Nav
 cd CPSL_ROS2_Nav
 sudo bash scripts/deps/slam.sh && sudo bash scripts/deps/nav2.sh   # apt dependencies
+sudo rosdep init; rosdep update                                    # once per machine
 rosdep install -q -y -r --from-paths src --ignore-src --rosdistro jazzy
 source /opt/ros/jazzy/setup.bash && colcon build --symlink-install && source install/setup.bash
 ros2 launch cpsl_nav console_slam.launch.py namespace:=cpsl_ugv_1 platform:=create3   # map

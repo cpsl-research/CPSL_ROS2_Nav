@@ -38,8 +38,12 @@ remaps because stock launch files stay on the global topics.
 3. `rewrite()` turns root keys into `/<ns>/<node>` and applies launch-decided `sets`; sets for a node
    with no section are skipped (a mode only rewrites what it runs).
 4. `nav2_rewrite()` keeps root keys short (stock `bringup_launch.py` nests the file in the namespace)
-   and sets frames and topics by key name ([tutorial 6](tutorials/06_tuning_params.md) lists them).
-   A frame it cannot classify (last segment not `map`/`odom`/`base_link`/`base_footprint`) raises.
+   and sets by key name: every frame key (`global_frame`, `robot_base_frame`, `local_frame`,
+   `base_frame`, `base_frame_id`, `odom_frame_id`, `fixed_frame`) by its last segment; every scan
+   source to `scan_topic`; every static layer to `map_topic`; the keepout filters' topics;
+   `odom_topic` / `cmd_vel_topic` only if given. A frame it cannot classify (last segment not
+   `map`/`odom`/`base_link`/`base_footprint`) raises. `rewrite()` (slam) sets frames, `scan_topic`,
+   `mode`, `map_name` and map_server's `yaml_filename`/`frame_id`.
 5. Topics it writes are absolute; frames are never prefixed.
 
 ## Adding a platform kind
@@ -58,13 +62,12 @@ remaps because stock launch files stay on the global topics.
 Pure Python, no ROS needed (PyYAML, numpy, pytest). From `src/cpsl_nav/`:
 
 ```bash
-python3 -m pytest test/test_params.py test/test_nav2_params.py test/test_grid.py -q   # 62 passed
+python3 -m pytest test/test_params.py test/test_nav2_params.py test/test_grid.py -q
 ```
 
-`colcon test --packages-select cpsl_nav` also runs the ament checks: pep257 passes, copyright is
-skipped, and **flake8 fails** (96 style findings in the older launch files and `setup.py`; the
-`console_*` files and `cpsl_nav/` are clean of them). Nothing tests the launch files end to end; run
-`--show-args` after editing one and check a real launch on a robot or simulator.
+`colcon test --packages-select cpsl_nav` also runs the ament lint checks; flake8 currently fails on
+the older launch files and `setup.py`. Nothing tests the launch files end to end; run `--show-args`
+after editing one and check a real launch on a robot or simulator.
 
 ## Map storage
 
@@ -72,11 +75,6 @@ A map is `<name>.yaml` + `<name>.pgm` (map_server format); a keepout mask is `<n
 `.keepout.pgm`. `.gitignore` excludes `*.pgm`, `*.data` and `*.posegraph`, so a map to commit needs
 `git add -f`. Maps in `src/cpsl_nav/maps/` are lab rooms; whether to commit a new one is a lab
 decision. A map's `image:` must be relative to its YAML.
-
-## Known state
-
-- `package.xml` still says `description: TODO`.
-- The `rviz_cfgs/*.rviz` files name lab topics (`/cpslCreate3/...`, `/cpsl_uav_1/...`).
 
 ## Appendix: files kept but not exercised
 
