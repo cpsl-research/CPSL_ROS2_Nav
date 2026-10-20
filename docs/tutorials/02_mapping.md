@@ -69,9 +69,7 @@ ros2 service call /cpsl_ugv_1/slam_toolbox/serialize_map \
   slam_toolbox/srv/SerializePoseGraph "{filename: '$HOME/maps/room'}"
 ```
 
-This writes `room.posegraph` and `room.data`. (`slam_toolbox/srv/SaveMap` with
-`"{name: {data: '$HOME/maps/room'}}"` on `.../save_map` is slam_toolbox's own way to write the
-`.yaml` and `.pgm`.) Stop mapping with Ctrl-C in the launch terminal.
+This writes `room.posegraph` and `room.data`. Stop mapping with Ctrl-C in the launch terminal.
 
 ## 4. Continue a map later
 
@@ -86,7 +84,6 @@ cp src/cpsl_nav/config/slam_create3.yaml ~/maps/slam_continue.yaml
 ros2 launch cpsl_nav console_slam.launch.py namespace:=cpsl_ugv_1 params_file:=$HOME/maps/slam_continue.yaml
 ```
 
-`config/slam_from_previous.yaml` is a lab example of the same two keys. Several robots can start
-from the same pose graph this way, each in its own namespace.
+`config/slam_from_previous.yaml` is a lab example of the same two keys.
 
 Next: [localize on the saved map](03_localization.md).

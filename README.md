@@ -8,7 +8,6 @@ without any other CPSL repository, on any robot that provides the topics listed 
 - Host: **Ubuntu 24.04**, **ROS 2 Jazzy** ([official install guide](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html));
   Gazebo Harmonic if you simulate.
 - Platform parameter files: `create3` (the reference) and `rover` (its header says it has not been run on a Rover).
-  The UAV files (`nav2_uav*.yaml`) are old lab starting points and are not covered here.
 
 ## What your robot must provide
 
@@ -39,11 +38,11 @@ ros2 launch cpsl_nav console_slam.launch.py namespace:=cpsl_ugv_1 platform:=crea
 ## Tutorials (no console needed)
 
 1. [Install and build](docs/tutorials/01_install_and_build.md)
-2. [Make a map](docs/tutorials/02_mapping.md): `console_slam.launch.py mode:=mapping`, saving, continuing a map
-3. [Localize on a saved map](docs/tutorials/03_localization.md): `mode:=localization`, AMCL, initial pose
-4. [Navigate with Nav2 and RViz](docs/tutorials/04_nav2_and_rviz.md): `console_nav.launch.py`, goals; the older launch files
-5. [Keepout zones and exploration](docs/tutorials/05_explore_and_keepout.md): `console_explore.launch.py`
-6. [Tuning parameters](docs/tutorials/06_tuning_params.md): platform files, overrides, `python3 -m cpsl_nav.params`
+2. [Make a map](docs/tutorials/02_mapping.md)
+3. [Localize on a saved map](docs/tutorials/03_localization.md)
+4. [Navigate with Nav2 and RViz](docs/tutorials/04_nav2_and_rviz.md), including the older launch files
+5. [Keepout zones and exploration](docs/tutorials/05_explore_and_keepout.md)
+6. [Tuning parameters](docs/tutorials/06_tuning_params.md)
 
 Developers: [docs/DEVELOPING.md](docs/DEVELOPING.md) (layout, parameter rules, adding a platform, tests, maps).
 
@@ -56,7 +55,6 @@ Developers: [docs/DEVELOPING.md](docs/DEVELOPING.md) (layout, parameter rules, a
 | `console_explore.launch.py` | `mode:=frontier` or `mode:=wander` |
 | `slam_sync`, `localization`, `nav2`, `rviz_nav` | the older launch files; they prefix frames with the namespace (tutorial 04) |
 
-Each lists its arguments with `ros2 launch cpsl_nav <file> --show-args`. Maps live in
-`src/cpsl_nav/maps/` (lab rooms; make your own with tutorial 02).
+Each lists its arguments with `ros2 launch cpsl_nav <file> --show-args`.
 
 Optional: the lab's console app runs the `console_*` launch files; nothing here needs it.

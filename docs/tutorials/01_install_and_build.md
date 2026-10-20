@@ -1,7 +1,7 @@
 # 1. Install and build
 
 Install `cpsl_nav` and its dependencies on a fresh Ubuntu 24.04 host, without any other CPSL
-repository. Tested target: Ubuntu 24.04, ROS 2 Jazzy.
+repository.
 
 ## 1. Install ROS 2 Jazzy
 

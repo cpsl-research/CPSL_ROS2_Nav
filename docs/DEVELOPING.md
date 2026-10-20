@@ -38,7 +38,7 @@ remaps because stock launch files stay on the global topics.
 3. `rewrite()` turns root keys into `/<ns>/<node>` and applies launch-decided `sets`; sets for a node
    with no section are skipped (a mode only rewrites what it runs).
 4. `nav2_rewrite()` keeps root keys short (stock `bringup_launch.py` nests the file in the namespace)
-   and sets frames, scan, map, odom, cmd_vel and keepout topics wherever they occur, by key name.
+   and sets frames and topics by key name ([tutorial 6](tutorials/06_tuning_params.md) lists them).
    A frame it cannot classify (last segment not `map`/`odom`/`base_link`/`base_footprint`) raises.
 5. Topics it writes are absolute; frames are never prefixed.
 
@@ -77,7 +77,6 @@ decision. A map's `image:` must be relative to its YAML.
 
 - `package.xml` still says `description: TODO`.
 - The `rviz_cfgs/*.rviz` files name lab topics (`/cpslCreate3/...`, `/cpsl_uav_1/...`).
-- The older launch files and `nav2_ugv.yaml` assume `cpsl_ugv_1/odom` and `cpsl_ugv_1/base_footprint`.
 
 ## Appendix: files kept but not exercised
 

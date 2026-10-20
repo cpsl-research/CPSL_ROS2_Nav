@@ -60,8 +60,7 @@ files, kept because they work for the robots they were written for. They differ 
 `console_*` ones in a way that decides whether they work for you:
 
 - They **prefix frames with the namespace**: with `namespace:=cpsl_ugv_1`, slam and AMCL look for
-  `cpsl_ugv_1/odom` and `cpsl_ugv_1/base_footprint` (`slam_sync.launch.py:71-72`,
-  `localization.launch.py:96-97`), and they read the **global** `/tf`.
+  `cpsl_ugv_1/odom` and `cpsl_ugv_1/base_footprint`, and they read the **global** `/tf`.
 - `nav2.launch.py` loads `config/nav2_ugv.yaml`, which hard-codes `cpsl_ugv_1/odom`,
   `cpsl_ugv_1/base_footprint` and `/cpsl_ugv_1/radar_combined/scan`.
 
