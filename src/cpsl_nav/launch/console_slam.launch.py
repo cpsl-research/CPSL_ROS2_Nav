@@ -19,7 +19,7 @@ names are passed as given (no tf prefix is added): the Create 3 publishes
 
 Parameters: `params_file` (default: this package's config/slam_<platform>.yaml)
 merged with `overrides_file`, then rewritten by cpsl_nav/params.py into a
-temporary file; see the README, "Parameters for console".
+temporary file; see docs/DEVELOPING.md, "How a console launch runs" and "`params.py` rules".
 """
 
 import os

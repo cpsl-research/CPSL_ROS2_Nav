@@ -1,7 +1,7 @@
 # console_slam.launch.py parameters for the iRobot Create 3 (console platform kind `create3`).
 #
-# One full file per console platform kind (`slam_<kind>.yaml`); see the README,
-# "Parameters for console". Create 3: its own odom -> base_link on /<namespace>/tf, unprefixed frame
+# One full file per console platform kind (`slam_<kind>.yaml`); see docs/DEVELOPING.md,
+# "`params.py` rules". Create 3: its own odom -> base_link on /<namespace>/tf, unprefixed frame
 # names (console passes tf_topic:=/<namespace>/tf).
 #
 # Sections: slam_toolbox (mode:=mapping), map_server + amcl (mode:=localization).

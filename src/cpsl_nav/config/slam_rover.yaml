@@ -1,7 +1,7 @@
 # console_slam.launch.py parameters for the Rover Robotics Rover Pro (console platform kind `rover`).
 #
-# One full file per console platform kind (`slam_<kind>.yaml`); see the README,
-# "Parameters for console". Rover Pro: UNTESTED with this launch. Frames from CPSL_ROS2_Rover's
+# One full file per console platform kind (`slam_<kind>.yaml`); see docs/DEVELOPING.md,
+# "`params.py` rules". Rover Pro: UNTESTED with this launch. Frames from CPSL_ROS2_Rover's
 # roverrobotics_driver/config/pro_config.yaml (odom_frame_id: odom,
 # odom_child_frame_id: base_link; publish_tf: false, so odom -> base_link comes
 # from its robot_localization EKF). console runs the driver un-namespaced, on /tf.

@@ -26,7 +26,7 @@ relay).
 Parameters: `params_file` (default: this package's config/nav2_<platform>.yaml)
 merged with `overrides_file`, then rewritten by cpsl_nav/params.py
 (nav2_rewrite: frames, scan/map/odom/cmd_vel topics, keepout topics) into a
-temporary file; see the README, "Parameters for console".
+temporary file; see docs/DEVELOPING.md, "How a console launch runs" and "`params.py` rules".
 """
 
 import os
