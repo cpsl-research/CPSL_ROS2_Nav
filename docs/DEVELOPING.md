@@ -7,7 +7,8 @@ For people changing this repo. Users want the [README](../README.md) and the
 ## Layout
 
 One ament_python package, `src/cpsl_nav/`; `scripts/deps/*.sh` are the apt dependencies
-(`_common.sh` holds the shared helpers: root only, idempotent, system packages only).
+(`_common.sh` holds the shared helpers: root only, idempotent, system packages only);
+`bash scripts/deps/<name>.sh --check` needs no root, installs nothing and lists what is missing.
 
 | Path | What |
 |---|---|
