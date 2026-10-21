@@ -6,3 +6,6 @@ log/*
 *.data
 *.posegraph
 *.pgm
+build_docker/
+install_docker/
+log_docker/
